@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.unipiazza.attivitapp"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:name="com.unipiazza.attivitapp.UnipiazzaApp" >
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.Login"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+						<category android:name="android.intent.category.LAUNCHER" />	                
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.Register"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.AddComment"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.ReadComments"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.HomeTap"
+            android:label="@string/homeTapp"    
+                    
+            android:screenOrientation="portrait" >
+        <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            	<category android:name="android.intent.category.HOME" />	                
+                <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.HomeActivity"
+            android:label="@string/home_label"
+            android:screenOrientation="portrait" >
+        </activity>
+           <activity
+            android:name="com.unipiazza.attivitapp.ui.AddCoins"
+            android:label="@string/add_coins_label"
+            android:parentActivityName="com.unipiazza.attivitapp.ui.HomeActivity" >
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.AddProducts"
+            android:label="@string/add_prducts_label"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.GiftActivity"
+            android:label="@string/gift_label"
+            android:parentActivityName="com.unipiazza.attivitapp.ui.HomeActivity" 
+            android:screenOrientation="portrait" >        
+        </activity>
+        <activity
+            android:name="com.unipiazza.attivitapp.ui.UpdateCoins"
+            android:label="@string/update_label"
+            android:screenOrientation="portrait" >
+        </activity>
+      
+
+        <receiver android:name="com.unipiazza.attivitapp.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

@@ -1,38 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- string ids for registration.xml -->
     <string name="app_name">Unipiazza</string>
-    <string name="username_textview">Username:</string>
-    <string name="password_textview">Password:</string>
-    <string name="submit">Invia</string>
-    <string name="homeTapp">In attesa di utenti...</string>
-
-    <!-- string ids for home.xml -->
-    <string name="add_prodotti">AGGIUNGI PRODOTTI</string>
-    <string name="add_premio">AGGIUNGI PREMI</string>
-    <string name="read_comments_title">Commenti recenti</string>
-    <string name="add_product_title">Lista Prodotti</string>
-    <string name="passwords_not_same">Password scorretta</string>
-
-    <color name="orange">#f58220</color>
-    <color name="orange_dark">#e94e1b</color>
-    <color name="orange_very_dark">#a33613</color>
-    <color name="white">#ffffff</color>
-    <color name="gray">#fcfcfc</color>
-
-    <string name="explanation">Avvicina il Pass dell\'utente</string>
-    <string name="read_ok">Tessera letta con successo!</string>
-    <string name="edit_message">Modifica messaggio </string>
-    <string name="search_id">Prosegui</string>
-    <string name="logo">Logo</string>
     <string name="action_settings">Settings</string>
+    <string name="explanation">Tappa una tessera Unipiazza</string>
     <string name="products">Lista prodotti con bottoni qua sotto</string>
-    <string name="gift_label">Premi disponibili per utente</string>
+    <string name="search_id">Ricerca ID utente</string>
+    <string name="gift_label">Gift Page</string>
     <string name="test_label">Test ID Page</string>
-    <string name="home_label">Home utente</string>
-    <string name="update_label">Riepilogo utente</string>
-    <string name="add_coins_label">Inserisci l\'importo in euro</string>
-    <string name="add_prducts_label">Aggiungi prodotti</string>
+    <string name="home_label">Home Page</string>
     <string name="search_label">Search ID Page</string>
     <string name="add_activity_label">New Products Page</string>
     <string name="btn_add_product">Aggiungi Prodotto</string>
@@ -40,42 +15,8 @@
     <string name="hello">Ciao</string>
     <string name="hello_addproduct">Aggiungi un prodotto blabla</string>
     <string name="hello_gift">Regala un prodotto blabla</string>
+    <string name="edit_message">Modifica messaggio</string>
     <string name="button_send">Invia</string>
-    <string name="button_back">Indietro</string>
-    <string name="button_canc">Canc</string>
-    <string name="total">Carrello vuoto</string>
-    <string name="coins">Coins : </string>
-    <string name="update_success">Operazione eseguita con successo!</string>
-    <string name="update_question">Vuoi aggiungere altro? </string>
-    <string name="yes">Si</string>
-    <string name="no">Yeah!</string>
-    <string name="saldo">Saldo</string>
-    <string name="ok">OK!</string>
-   
+    <color name="orange">#ee7203</color>      
     
-    <!-- Stringhe add_coins.xml -->
-    <string name="button_width">50dp</string>
-    <string name="button_height">60dp</string>
-    <string name="del">Bottone Del</string>
-     <string name="num_00">00</string>
-    <string name="num_0">0</string>
-    <string name="num_1">1</string>
-    <string name="num_2">2</string>
-    <string name="num_3">3</string>
-    <string name="num_4">4</string>
-    <string name="num_5">5</string>
-    <string name="num_6">6</string>
-    <string name="num_7">7</string>
-    <string name="num_8">8</string>
-    <string name="num_9">9</string>
-    <string name="comma">,</string>
-
-    <!-- Colori Btn.xml -->
-    <color name="black">#000</color>
-    <color name="blue">#00f</color>
-    <color name="red">#f00</color>
-    
-    
-    
-
 </resources>

@@ -1,63 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/orange" >
-
-    <ExpandableListView
-        android:id="@+id/grid"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/bottom_layover"
-        android:layout_alignParentTop="true"
-        android:clickable="false"
-        android:divider="@null"
-        android:groupIndicator="@null" />
-
-    <RelativeLayout
-        android:id="@+id/bottom_layover"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/orange"
+    tools:context=".AddProducts" > 
+      
+        <TextView
+    android:id="@+id/textView_explanation"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/hello_addproduct" />
+            
+      <Button android:id="@+id/btnHomeId"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="#c0c0c0"
-        android:orientation="horizontal"
-        android:weightSum="2" >
-
-        <TextView
-            android:id="@+id/totale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/total"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/totresult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <Button
-            android:id="@+id/canc_products"
-            style="@style/WhiteText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/totale"
-            android:background="@drawable/rounded_button_orange_dark"
-            android:onClick="addComment"
-            android:text="@string/button_canc" />
-
-        <Button
-            android:id="@+id/send_products"
-            style="@style/WhiteText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/totale"
-            android:background="@drawable/rounded_button_orange_dark"
-            android:onClick="addComment"
-            android:text="@string/button_send" />
-    </RelativeLayout>
-
+        android:text="@string/hello_addproduct"
+        android:layout_marginTop="25dip"/>
+    
 </RelativeLayout>

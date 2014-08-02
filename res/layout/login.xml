@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/orange" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_unipiazza" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:ems="14"
+        android:hint="Username"
+        android:nextFocusForward="@+id/password"
+        android:singleLine="true" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/username"
+        android:layout_centerHorizontal="true"
+        android:ems="14"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:nextFocusForward="@+id/login"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/login"
+        style="@style/WhiteText"
+        android:layout_width="290dp"
+        android:layout_height="55dp"
+        android:layout_alignParentRight="false"
+        android:layout_below="@+id/password"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="1dp"
+        android:background="@drawable/focus_button"
+        android:onClick="addComment"
+        android:text="Accedi"
+        android:textSize="35sp" />
+
+</RelativeLayout>

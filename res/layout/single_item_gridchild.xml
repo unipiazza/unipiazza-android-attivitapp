@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/orange_dark" >
+
+    <Button
+        android:id="@+id/product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="5dp"
+        android:background="@drawable/rounded_button_orange_very_dark"
+        android:drawableTop="@drawable/ic_launcher"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="1"
+        android:padding="5dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

@@ -1,23 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@color/orange"
-    tools:context=".GiftActivity" >   
-        <TextView
-    android:id="@+id/textView_explanation"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/hello_gift" />
-    
-      <Button android:id="@+id/btnHomeId"
+    android:layout_margin="0dp"
+    android:background="@color/orange" >
+      <ListView
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hello_gift"
-        android:layout_marginTop="25dip"/>
-    
+        android:divider="@color/orange"
+        android:layout_marginTop="2dp"
+        android:dividerHeight="2dp"
+        android:scrollbars="none"/>
+
+  <RelativeLayout
+        android:id="@+id/bottom_layover"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/orange"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/gift_back"
+            style="@style/WhiteText"
+            android:layout_width="fill_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentRight="false"
+            android:layout_margin="1dp"
+            android:background="@drawable/focus_button"
+            android:onClick="addComment"
+            android:text="@string/button_back"
+            android:textSize="35sp" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

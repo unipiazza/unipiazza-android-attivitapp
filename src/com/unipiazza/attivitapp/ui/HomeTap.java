@@ -32,6 +32,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.graphics.drawable.AnimationDrawable;
+import android.widget.ImageView;
 
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.R;
@@ -81,6 +83,10 @@ public class HomeTap extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.hometap_layout);		
+		ImageView gyroView = (ImageView) findViewById(R.id.taploop);
+		gyroView.setBackgroundResource(R.drawable.loop_animation);
+		AnimationDrawable gyroAnimation = (AnimationDrawable) gyroView.getBackground();
+		gyroAnimation.start();
 		if(((UnipiazzaApp)getApplication()).isLoggato()) {		
 		mTextView = (TextView) findViewById(R.id.textView_explanation);
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);

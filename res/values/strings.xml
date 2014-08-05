@@ -20,7 +20,7 @@
     <color name="white">#ffffff</color>
     <color name="gray">#fcfcfc</color>
 
-    <string name="explanation">Avvicina il Pass dell\'utente</string>
+    <string name="explanation">Avvicina il Pass sul retro</string>
     <string name="read_ok">Tessera letta con successo!</string>
     <string name="edit_message">Modifica messaggio </string>
     <string name="search_id">Prosegui</string>

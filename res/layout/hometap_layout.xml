@@ -5,24 +5,23 @@
     android:background="@color/orange"
     tools:context=".HomeTap" >
 
+    <ImageView
+        android:id="@+id/taploop"
+        android:layout_width="290dp"
+        android:layout_height="166dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="96dp" />
+
     <TextView
         android:id="@+id/textView_explanation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/imageView1"
+        android:layout_above="@+id/taploop"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="21dp"
+        android:layout_marginBottom="60dp"
         android:text="@string/explanation"
         android:textColor="@color/white"
-        android:textSize="22sp" />
-
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="134dp"
-        android:src="@drawable/ic_waiting_tap" />
+        android:textSize="25sp" />
 
 </RelativeLayout>

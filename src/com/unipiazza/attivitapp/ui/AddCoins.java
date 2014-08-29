@@ -205,7 +205,7 @@ public class AddCoins extends Activity implements OnClickListener {
 				};
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage("Confermi l'invio di " + txtResult.getText().toString() + "ï¿½?").setPositiveButton("Si", dialogClickListener)
+				builder.setMessage("Confermi l'invio di " + txtResult.getText().toString() + "€?").setPositiveButton("Si", dialogClickListener)
 						.setNegativeButton("No", dialogClickListener).show();
 			}
 		default:

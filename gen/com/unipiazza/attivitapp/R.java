@@ -57,9 +57,18 @@ public final class R {
         public static final int rounded_button_orange_dark=0x7f02001c;
         public static final int rounded_button_orange_very_dark=0x7f02001d;
         public static final int tap1=0x7f02001e;
-        public static final int tap2=0x7f02001f;
-        public static final int tap3=0x7f020020;
-        public static final int user_icon=0x7f020021;
+        public static final int tap10=0x7f02001f;
+        public static final int tap11=0x7f020020;
+        public static final int tap12=0x7f020021;
+        public static final int tap2=0x7f020022;
+        public static final int tap3=0x7f020023;
+        public static final int tap4=0x7f020024;
+        public static final int tap5=0x7f020025;
+        public static final int tap6=0x7f020026;
+        public static final int tap7=0x7f020027;
+        public static final int tap8=0x7f020028;
+        public static final int tap9=0x7f020029;
+        public static final int user_icon=0x7f02002a;
     }
     public static final class id {
         public static final int TextView01=0x7f090015;
@@ -112,10 +121,10 @@ public final class R {
         public static final int send_products=0x7f090001;
         public static final int submit=0x7f090014;
         public static final int tableId=0x7f090003;
-        public static final int taploop=0x7f09002d;
+        public static final int taploop=0x7f09002e;
         public static final int textView1=0x7f090017;
         public static final int textView2=0x7f090012;
-        public static final int textView_explanation=0x7f09002e;
+        public static final int textView_explanation=0x7f09002d;
         public static final int title=0x7f090016;
         public static final int top_layover=0x7f090032;
         public static final int totale=0x7f090019;

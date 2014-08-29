@@ -28,6 +28,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
@@ -99,7 +100,7 @@ public class HomeTap extends Activity {
 			return;
 		}
 		if (!mNfcAdapter.isEnabled()) {
-			mTextView.setText("L'NFC ï¿½ disabilitato, abilitalo e riavvia.");
+			mTextView.setText("L'NFC è disabilitato, abilitalo e riavvia.");
 		} else {
 			mTextView.setText(R.string.explanation);
 		}
@@ -144,9 +145,11 @@ public class HomeTap extends Activity {
 		String action = intent.getAction();
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)||
 	            NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 			String type = intent.getType();
 				Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);	
 				Log.v("value ", "TAG Preso : " + tag);
+				v.vibrate(500);
 				byte[] tag_id = tag.getId();
 				String tag_id_string = bytesToHex(tag_id);
 				Log.i("tag ID Appena preso", tag_id_string);

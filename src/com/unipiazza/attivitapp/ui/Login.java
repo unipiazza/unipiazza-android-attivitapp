@@ -60,6 +60,8 @@ public class Login extends Activity implements OnClickListener {
 	public static final String MIME_TEXT_PLAIN = "text/plain";
 	private NfcAdapter mNfcAdapter;
 	private SharedPreferences sp;
+	private String username;
+	private String password;
 
 	// Classe di controllo connessione
 	public class ConnectionDetector {
@@ -87,27 +89,25 @@ public class Login extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 
+		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
 		sp = PreferenceManager.getDefaultSharedPreferences(Login.this);
-		String username = sp.getString("username", "");
+		username = sp.getString("username", "");
+		password = sp.getString("password", "");
 		String id_attivita = sp.getString("id_attivita", "");
 
 		if (!username.isEmpty() && !id_attivita.isEmpty()) {
-			Intent i = new Intent(Login.this, HomeTap.class);
-			((UnipiazzaApp) getApplication()).setLoggato(true);
-			Log.d("value", "Login attività " + username + " con id_attivita = " + id_attivita + " avvenuto con successo!!");
-			finish();
-			startActivity(i);
-			Toast.makeText(Login.this, "Buongiorno " + username + "!", Toast.LENGTH_LONG).show();
-			return;
+			new AttemptLogin().execute();
 		}
 
-		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		user = (EditText) findViewById(R.id.username);
 		pass = (EditText) findViewById(R.id.password);
 		pass.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					username = user.getText().toString();
+					password = pass.getText().toString();
 					new AttemptLogin().execute();
 				}
 				return false;
@@ -162,6 +162,8 @@ public class Login extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.login:
+			username = user.getText().toString();
+			password = pass.getText().toString();
 			new AttemptLogin().execute();
 			break;
 		default:
@@ -194,9 +196,8 @@ public class Login extends Activity implements OnClickListener {
 			if (internet == true) {
 				//Internet presente quindi:
 				try {
-					String username = user.getText().toString();
-					String password = pass.getText().toString();
 					// Building Parameters
+					Log.v("UNIPIAZZA", "username=" + username + " password=" + password);
 					List<NameValuePair> params = new ArrayList<NameValuePair>();
 					params.add(new BasicNameValuePair("username", username));
 					params.add(new BasicNameValuePair("password", password));
@@ -212,6 +213,7 @@ public class Login extends Activity implements OnClickListener {
 						// save user data
 						Editor edit = sp.edit();
 						edit.putString("username", username);
+						edit.putString("password", password);
 						String id_attivita = json.getString(TAG_ID_ATTIVITA);
 						edit.putString("id_attivita", id_attivita);
 						edit.commit();

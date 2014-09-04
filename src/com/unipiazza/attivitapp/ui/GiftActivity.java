@@ -2,28 +2,27 @@ package com.unipiazza.attivitapp.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -34,7 +33,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.unipiazza.attivitapp.CurrentShop;
 import com.unipiazza.attivitapp.JSONParser;
+import com.unipiazza.attivitapp.Prize;
 import com.unipiazza.attivitapp.R;
 
 public class GiftActivity extends ListActivity implements OnClickListener {
@@ -72,54 +73,16 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 	 * Retrieves recent post data from the server.
 	 */
 	public void updateJSONdata() {
-		try {
-			mProductList = new ArrayList<HashMap<String, String>>();
-			// Bro, it's time to power up the J parser
-			//Retrieving Saved Username Data:
-			SharedPreferences sp11 = PreferenceManager.getDefaultSharedPreferences(GiftActivity.this);
-			String id_user = sp11.getString("id", "anon");
-			SharedPreferences sp20 = PreferenceManager.getDefaultSharedPreferences(GiftActivity.this);
-			String user_coins = sp20.getString("coins", "anon");
-			SharedPreferences sp6 = PreferenceManager.getDefaultSharedPreferences(GiftActivity.this);
-			String id_attivita = sp6.getString("id_attivita", "anon");
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("user_coins", user_coins));
-			params.add(new BasicNameValuePair("id_utente", id_user));
-			params.add(new BasicNameValuePair("id_attivita", id_attivita));
-			Log.v("value ", "Da passare: User Coins = " + user_coins + " | Id Utente = " + id_user + " | Id Attivita = " + id_attivita + " |");
-			JSONObject json = jsonParser.makeHttpRequest(READ_GIFT_PRODUCTS_URL, "POST", params);
-			Log.v("UNIPIAZZA", "json=" + json);
-			int success = json.getInt(TAG_SUCCESS);
-			if (success == 1) {
-				mProducts = json.getJSONArray(TAG_POSTS);
-				// looping through all posts according to the json object returned
-				for (int i = 0; i < mProducts.length(); i++) {
-					JSONObject c = mProducts.getJSONObject(i);
-					// gets the content of each tag
-					String name = c.getString(TAG_NAME);
-					String id = c.getString(TAG_ID_PRODUCT);
-					String coins = c.getString(TAG_PRICE);
-					Log.v("value ", "Name = " + name + " | Coins = " + coins + " | Id prodotto = " + id);
-					// creating new HashMap
-					HashMap<String, String> map = new HashMap<String, String>();
-					map.put(TAG_NAME, name);
-					map.put(TAG_ID_PRODUCT, id);
-					map.put(TAG_PRICE, coins);
-					// adding HashList to ArrayList
-					mProductList.add(map);
-				}
-			}
-			else if (success == 2) {
-				Log.v("value ", "Non ci sono premi da visualizzare ;( ");
-				return;
-			}
-			else {
-				Log.d("Login Failure!", json.getString(TAG_MESSAGE));
-				return;
-			}
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		ArrayList<Prize> prizes = CurrentShop.getInstance().getPrizes();
+		mProductList = new ArrayList<HashMap<String, String>>();
+
+		for (Prize prize : prizes) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(TAG_NAME, prize.getName());
+			map.put(TAG_ID_PRODUCT, prize.getId() + "");
+			map.put(TAG_PRICE, prize.getCoins() + "");
+			// adding HashList to ArrayList
+			mProductList.add(map);
 		}
 	}
 
@@ -160,7 +123,29 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 				};
 				AlertDialog.Builder builder = new AlertDialog.Builder(GiftActivity.this);
 				builder.setMessage("Confermi " + mProductList.get(+InternalPosition).get("name") + "?").setPositiveButton("Si", dialogClickListener)
-						.setNegativeButton("No", dialogClickListener).show();
+						.setNegativeButton("No", dialogClickListener);
+
+				AlertDialog dialog = builder.create();
+				dialog.setOnShowListener(new OnShowListener() {
+
+					@Override
+					public void onShow(DialogInterface dialog) {
+						Button b = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+						if (b != null) {
+							b.setBackgroundColor(Color.RED);
+							b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+							b.setTypeface(null, Typeface.BOLD);
+						}
+						Button bp = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+						if (bp != null) {
+							bp.setBackgroundColor(Color.GREEN);
+							bp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+							bp.setTypeface(null, Typeface.BOLD);
+						}
+					}
+				});
+
+				dialog.show();
 			}
 		});
 	}

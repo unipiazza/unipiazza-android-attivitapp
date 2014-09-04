@@ -1,24 +1,15 @@
 package com.unipiazza.attivitapp.ui;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.nfc.NdefMessage;
@@ -31,14 +22,16 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.drawable.AnimationDrawable;
-import android.widget.ImageView;
 
+import com.google.gson.JsonObject;
+import com.unipiazza.attivitapp.AttivitAppRESTClient;
+import com.unipiazza.attivitapp.CurrentShop;
+import com.unipiazza.attivitapp.HttpCallback;
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.R;
-import com.unipiazza.attivitapp.UnipiazzaApp;
 
 public class HomeTap extends Activity {
 	// url
@@ -58,58 +51,69 @@ public class HomeTap extends Activity {
 	// Progress Dialog
 	private ProgressDialog pDialog;
 	JSONParser jsonParser = new JSONParser();
-	
+
 	// Classe di controllo connessione
 	public class ConnectionDetector {
-		 private Context _context;
-		 public ConnectionDetector(Context context){
-		     this._context = context;
-		 }
-		 public boolean isConnectingToInternet(){
-		     ConnectivityManager connectivity = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		       if (connectivity != null){
-		           NetworkInfo[] info = connectivity.getAllNetworkInfo();
-		           if (info != null) 
-		           	for (int i = 0; i < info.length; i++) 
-		            	if (info[i].getState() == NetworkInfo.State.CONNECTED){
-		                       return true;
-		                }
-		       }
-		       return false;
-		 }
-	 }
-	
+		private Context _context;
+
+		public ConnectionDetector(Context context) {
+			this._context = context;
+		}
+
+		public boolean isConnectingToInternet() {
+			ConnectivityManager connectivity = (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (connectivity != null) {
+				NetworkInfo[] info = connectivity.getAllNetworkInfo();
+				if (info != null)
+					for (int i = 0; i < info.length; i++)
+						if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+							return true;
+						}
+			}
+			return false;
+		}
+	}
+
 	//Controllo Smartphone NFC
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.hometap_layout);		
+		setContentView(R.layout.hometap_layout);
 		ImageView gyroView = (ImageView) findViewById(R.id.taploop);
 		gyroView.setBackgroundResource(R.drawable.loop_animation);
 		AnimationDrawable gyroAnimation = (AnimationDrawable) gyroView.getBackground();
 		gyroAnimation.start();
-		if(((UnipiazzaApp)getApplication()).isLoggato()) {		
-		mTextView = (TextView) findViewById(R.id.textView_explanation);
-		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-		PendingIntent pendingIntent = PendingIntent.getActivity(
-				  this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-		if (mNfcAdapter == null) {
-			// Stop here, we definitely need NFC
-			Toast.makeText(this, "Questo dispositivo non supporta l'NFC", Toast.LENGTH_LONG).show();
-			finish();
-			return;
-		}
-		if (!mNfcAdapter.isEnabled()) {
-			mTextView.setText("L'NFC è disabilitato, abilitalo e riavvia.");
-		} else {
-			mTextView.setText(R.string.explanation);
-		}
-		handleIntent(getIntent());
-		} else {
-			Intent login = new Intent(this, Login.class);
-			finish();
-			startActivity(login);
-		}
+		mNfcAdapter = NfcAdapter.getDefaultAdapter(HomeTap.this);
+
+		CurrentShop.getInstance().isAuthenticated(HomeTap.this, new HttpCallback() {
+
+			@Override
+			public void onSuccess(JsonObject result) {
+				mTextView = (TextView) findViewById(R.id.textView_explanation);
+				PendingIntent pendingIntent = PendingIntent.getActivity(
+						HomeTap.this, 0, new Intent(HomeTap.this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+				if (mNfcAdapter == null) {
+					// Stop here, we definitely need NFC
+					Toast.makeText(HomeTap.this, "Questo dispositivo non supporta l'NFC", Toast.LENGTH_LONG).show();
+					finish();
+					return;
+				}
+				if (!mNfcAdapter.isEnabled()) {
+					mTextView.setText("L'NFC ï¿½ disabilitato, abilitalo e riavvia.");
+				} else {
+					mTextView.setText(R.string.explanation);
+				}
+				handleIntent(getIntent());
+			}
+
+			@Override
+			public void onFail(JsonObject result, Throwable e) {
+				Intent login = new Intent(HomeTap.this, Login.class);
+				finish();
+				startActivity(login);
+			}
+		});
+
 	}
 
 	@Override
@@ -118,6 +122,7 @@ public class HomeTap extends Activity {
 
 		setupForegroundDispatch(this, mNfcAdapter);
 	}
+
 	@Override
 	protected void onPause() {
 		/**
@@ -128,6 +133,7 @@ public class HomeTap extends Activity {
 		stopForegroundDispatch(this, mNfcAdapter);
 		super.onPause();
 	}
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		/**
@@ -141,39 +147,43 @@ public class HomeTap extends Activity {
 		 */
 		handleIntent(intent);
 	}
+
 	private void handleIntent(Intent intent) {
 		String action = intent.getAction();
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)||
-	            NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action) ||
+				NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
 			Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 			String type = intent.getType();
-				Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);	
-				Log.v("value ", "TAG Preso : " + tag);
-				v.vibrate(500);
-				byte[] tag_id = tag.getId();
-				String tag_id_string = bytesToHex(tag_id);
-				Log.i("tag ID Appena preso", tag_id_string);
-				SharedPreferences sp19 = PreferenceManager
-						.getDefaultSharedPreferences(HomeTap.this);
-				Editor edit19 = sp19.edit();
-				edit19.putString("tag_id_string", tag_id_string);
-				edit19.commit();
-				Log.i("tag ID", tag_id_string);
-				new NdefReaderTask().execute(tag);
-		} 
-		
+			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+			Log.v("value ", "TAG Preso : " + tag);
+			v.vibrate(500);
+			byte[] tag_id = tag.getId();
+			String tag_id_string = bytesToHex(tag_id);
+			Log.i("tag ID Appena preso", tag_id_string);
+			SharedPreferences sp19 = PreferenceManager
+					.getDefaultSharedPreferences(HomeTap.this);
+			Editor edit19 = sp19.edit();
+			edit19.putString("tag_id_string", tag_id_string);
+			edit19.commit();
+			Log.i("tag ID", tag_id_string);
+			new NdefReaderTask().execute(tag);
+		}
+
 	}
-    final protected static char[] hexArray = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-    public static String bytesToHex(byte[] bytes) {
-    	char[] hexChars = new char[bytes.length * 2];
-    	int v;
-    	for ( int j = 0; j < bytes.length; j++ ) {
-    		v = bytes[j] & 0xFF;
-    		hexChars[j * 2] = hexArray[v >>> 4];
-    		hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-    	}
-    	return new String(hexChars);
-    }
+
+	final protected static char[] hexArray = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+	public static String bytesToHex(byte[] bytes) {
+		char[] hexChars = new char[bytes.length * 2];
+		int v;
+		for (int j = 0; j < bytes.length; j++) {
+			v = bytes[j] & 0xFF;
+			hexChars[j * 2] = hexArray[v >>> 4];
+			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+		}
+		return new String(hexChars);
+	}
+
 	/**
 	 * @param activity
 	 *            The corresponding {@link Activity} requesting the foreground
@@ -181,13 +191,13 @@ public class HomeTap extends Activity {
 	 * @param adapter
 	 *            The {@link NfcAdapter} used for the foreground dispatch.
 	 */
-    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-        String[][] techList = new String[][]{};
-        adapter.enableForegroundDispatch(activity, pendingIntent, null, techList);
-    }
+	public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+		final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
+		String[][] techList = new String[][] {};
+		adapter.enableForegroundDispatch(activity, pendingIntent, null, techList);
+	}
 
 	/**
 	 * @param activity
@@ -216,10 +226,9 @@ public class HomeTap extends Activity {
 				if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN) {
 					try {
 						return readText(ndefRecord);
-					} 
-					catch (UnsupportedEncodingException e) {
+					} catch (UnsupportedEncodingException e) {
 						Log.e(TAG, "Unsupported Encoding", e);
-					}					
+					}
 				}
 			}
 			return null;
@@ -260,124 +269,45 @@ public class HomeTap extends Activity {
 				SharedPreferences sp19 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
 				String tag_id_string = sp19.getString("tag_id_string", "anon");
 				Log.v("value ", "tag_id_string : " + tag_id_string);
-				new SearchId().execute(tag_id_string);
-				
+				searchId(tag_id_string);
 			}
 		}
-		//JSON Ricerca ID
-		class SearchId extends AsyncTask<String, String, String> {
-			/**
-			 * Before starting background thread Show Progress Dialog
-			 * */
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				pDialog = new ProgressDialog(HomeTap.this);
-				pDialog.setMessage("Sto cercando l'utente...");
-				pDialog.setIndeterminate(false);
-				pDialog.setCancelable(true);
-				pDialog.show();
-			}
 
-			/**
-			 * Ricerca ID
-			 * */
-			protected String doInBackground(String... res_array) {
-				
-				//Controllo connessione ad Internet
-				ConnectionDetector cd = new ConnectionDetector(getApplicationContext()); 
-				Boolean internet = cd.isConnectingToInternet(); 
-				
-				if (internet==true){
-					try {
-						SharedPreferences sp19 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-						String tag_id_string = sp19.getString("tag_id_string", "anon");
-						List<NameValuePair> params = new ArrayList<NameValuePair>();
-						SharedPreferences sp_id_attivita = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-						String id_attivita = sp_id_attivita.getString("id_attivita", "a2");
-						Log.v("value ", "Tag_Id_String da inviare : " + tag_id_string);
-						Log.v("value ", "Id_attivita da inviare : " + id_attivita);
-						params.add(new BasicNameValuePair("hash_pass", tag_id_string));
-						params.add(new BasicNameValuePair("shop_id", id_attivita));
-						JSONObject json = jsonParser.makeHttpRequest(url_search_id,"POST", params);
-						Log.d("Login attempt", json.toString());
+		private void searchId(String hash_pass) {
+			pDialog = new ProgressDialog(HomeTap.this);
+			pDialog.setMessage("Sto cercando l'utente...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(true);
+			pDialog.show();
+			ConnectionDetector cd = new ConnectionDetector(getApplicationContext());
+			Boolean internet = cd.isConnectingToInternet();
 
-						int success = json.getInt(TAG_SUCCESS);
-						if (success == 1) {
-							Log.d("Sync avvenuta", json.toString());
-							Log.d("Login Avvenuto!", json.getString(TAG_MESSAGE));
-							String user = json.getString(TAG_USER);
-							String user_lastname = json.getString(TAG_USER_LASTNAME);							
-							String id = json.getString(TAG_ID_USER);
-							String coins = json.getString(TAG_COINS);
-							String pass = json.getString(TAG_PASS_TYPE);
-							Log.d("Utente Trovato, NOME --> ",user);
-							Log.d("Utente Trovato, COGNOME --> ",user_lastname);
-							Log.d("Id Trovato --> ",id);
-							Log.d("Tipo Pass --> ",pass);
-							Log.d("Gettoni utente --> ",coins);
-							SharedPreferences sp2 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-							Editor edit = sp2.edit();
-							edit.putString("user", user);
-							edit.commit(); 
-							SharedPreferences sppass = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-							Editor editpass = sppass.edit();
-							editpass.putString("pass", pass);
-							editpass.commit(); 
-							SharedPreferences sp27 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-							Editor edit_lastname = sp27.edit();
-							edit_lastname.putString("user_lastname", user_lastname);
-							edit_lastname.commit(); 
-							SharedPreferences sp11 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-							Editor edit_id = sp11.edit();
-							edit_id.putString("id", id);
-							edit_id.commit(); 
-							SharedPreferences sp20 = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-							Editor edit_coins = sp20.edit();
-							edit_coins.putString("coins", coins);
-							edit_coins.commit(); 						
-							Log.d("Utente Trovato --> ", user);
-							Intent i = new Intent(HomeTap.this, HomeActivity.class);
-							startActivity(i);
-							return json.getString(TAG_MESSAGE);
-						} 
-						else {
-							Log.d("Login Failure!", json.getString(TAG_MESSAGE));
-							return json.getString(TAG_MESSAGE);
-						}
+			if (internet == true) {
+				AttivitAppRESTClient.getInstance(HomeTap.this, true).getSearchUser(HomeTap.this, hash_pass, new HttpCallback() {
+
+					@Override
+					public void onSuccess(JsonObject result) {
+						Intent i = new Intent(HomeTap.this, HomeActivity.class);
+						startActivity(i);
+						pDialog.dismiss();
+						//Toast.makeText(HomeTap.this, result.toString(), Toast.LENGTH_LONG).show();
 					}
-					catch (JSONException e) {
-						e.printStackTrace();
-					}
-				}
-				Log.d("value", "Internet non attivo. Valore internet : " + internet);
-				SharedPreferences sp_internet = PreferenceManager.getDefaultSharedPreferences(HomeTap.this);
-				Editor edit19 = sp_internet.edit();
-				edit19.putBoolean("internet", internet);
-				edit19.commit();
-				return null;
-			}
-			/**
-			 * After completing background task Dismiss the progress dialog
-			 * **/
-			protected void onPostExecute(String file_url) {
-				// dismiss the dialog once done
-				pDialog.dismiss();
-				if (file_url != null) {
-					//Messaggio che compare sempre
-					Toast.makeText(HomeTap.this, file_url, Toast.LENGTH_LONG).show();
-				}
-				
-				//Controllo connessione ad Internet
-				ConnectionDetector cd = new ConnectionDetector(getApplicationContext()); 
-				Boolean internet = cd.isConnectingToInternet(); 
-				
-				if (internet==false)
-					Toast.makeText(HomeTap.this, "Non c'è connessione ad internet =(\r\nRiprova fra qualche minuto!", Toast.LENGTH_SHORT).show();
-			}
 
+					@Override
+					public void onFail(JsonObject result, Throwable e) {
+						pDialog.dismiss();
+						if (result != null)
+							Toast.makeText(HomeTap.this, result.get("msg").getAsString(), Toast.LENGTH_LONG).show();
+						else if (e != null)
+							Toast.makeText(HomeTap.this, e.toString(), Toast.LENGTH_LONG).show();
+
+					}
+				});
+			}
 		}
+
 	}
+
 	@Override
 	public void onBackPressed() {
 		//Non uscire, cane!

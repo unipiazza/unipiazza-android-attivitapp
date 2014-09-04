@@ -68,7 +68,8 @@ public final class R {
         public static final int tap7=0x7f020027;
         public static final int tap8=0x7f020028;
         public static final int tap9=0x7f020029;
-        public static final int user_icon=0x7f02002a;
+        public static final int user_icon_f=0x7f02002a;
+        public static final int user_icon_m=0x7f02002b;
     }
     public static final class id {
         public static final int TextView01=0x7f090015;
@@ -116,6 +117,8 @@ public final class R {
         public static final int post_comment=0x7f090033;
         public static final int product=0x7f09003a;
         public static final int product1=0x7f090022;
+        public static final int progressCoins=0x7f09003d;
+        public static final int progressCoinsGift=0x7f09003f;
         public static final int register=0x7f090034;
         public static final int saldoview=0x7f090029;
         public static final int send_products=0x7f090001;
@@ -131,6 +134,8 @@ public final class R {
         public static final int totresult=0x7f09001a;
         public static final int txt=0x7f09001e;
         public static final int txtResultId=0x7f090002;
+        public static final int update_gift_layout=0x7f090040;
+        public static final int update_layout=0x7f09003e;
         public static final int username=0x7f09002f;
     }
     public static final class layout {

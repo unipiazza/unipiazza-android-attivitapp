@@ -12,15 +12,19 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -205,8 +209,29 @@ public class AddCoins extends Activity implements OnClickListener {
 				};
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage("Confermi l'invio di " + txtResult.getText().toString() + "€?").setPositiveButton("Si", dialogClickListener)
-						.setNegativeButton("No", dialogClickListener).show();
+				builder.setMessage("Confermi l'invio di " + txtResult.getText().toString() + "â‚¬?").setPositiveButton("Si", dialogClickListener)
+						.setNegativeButton("No", dialogClickListener);
+				AlertDialog dialog = builder.create();
+				dialog.setOnShowListener(new OnShowListener() {
+
+					@Override
+					public void onShow(DialogInterface dialog) {
+						Button b = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+						if (b != null) {
+							b.setBackgroundColor(Color.RED);
+							b.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+							b.setTypeface(null, Typeface.BOLD);
+						}
+						Button bp = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+						if (bp != null) {
+							bp.setBackgroundColor(Color.GREEN);
+							bp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+							bp.setTypeface(null, Typeface.BOLD);
+						}
+					}
+				});
+
+				dialog.show();
 			}
 		default:
 			break;

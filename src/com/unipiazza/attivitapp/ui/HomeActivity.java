@@ -4,21 +4,21 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.unipiazza.attivitapp.CurrentUser;
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.R;
 
@@ -59,16 +59,21 @@ public class HomeActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
-		String user = sp.getString("user", "a2");
-		SharedPreferences sp2 = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
-		String user_lastname = sp2.getString("user_lastname", "a2");
-		user_lastname = (user_lastname.substring(0, 1));
-		SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
-		String coins = sp1.getString("coins", "a2");
+		CurrentUser currentUser = CurrentUser.getInstance();
+
+		String user = currentUser.getFirst_name();
+		String user_lastname = currentUser.getLast_name().substring(0, 1) + ".";
+
+		int coins = currentUser.getTotal_coins();
 
 		// Buttoni
 		ImageButton btnAddProduct = (ImageButton) findViewById(R.id.add_coin);
+		ImageView avatar = (ImageView) findViewById(R.id.avatar);
+		if (!currentUser.isGender())
+			avatar.setImageResource(R.drawable.user_icon_m);
+		else
+			avatar.setImageResource(R.drawable.user_icon_f);
+
 		btnAddProduct.setBackground(null);
 		ImageButton btnGift = (ImageButton) findViewById(R.id.gift_list);
 		btnGift.setBackground(null);
@@ -77,7 +82,7 @@ public class HomeActivity extends Activity {
 		final TextView view_saldo = (TextView) findViewById(R.id.saldoview);
 		text_name.setText(user);
 		last_name_view.setText(user_lastname);
-		view_saldo.setText(coins);
+		view_saldo.setText(coins + "");
 		Log.d("Utente Trovato, NOME --> ", user);
 		Log.d("Utente Trovato, COGNOME --> ", user_lastname);
 
@@ -90,7 +95,7 @@ public class HomeActivity extends Activity {
 				Boolean internet = cd.isConnectingToInternet();
 
 				if (internet == false)
-					Toast.makeText(HomeActivity.this, "Non c'� connessione ad internet =(\r\nRiprova fra qualche minuto!", Toast.LENGTH_SHORT).show();
+					Toast.makeText(HomeActivity.this, "Non c'è connessione ad internet =(\r\nRiprova fra qualche minuto!", Toast.LENGTH_SHORT).show();
 				else {
 					Intent i = new Intent(getApplicationContext(), AddCoins.class);
 					startActivity(i);

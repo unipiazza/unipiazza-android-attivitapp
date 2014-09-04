@@ -218,6 +218,13 @@ public class HomeTap extends Activity {
 			if (ndef == null) {
 				// NDEF is not supported by this Tag.
 				Log.v("value ", "NDEF is not supported by this Tag");
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						Toast.makeText(HomeTap.this, "Pass utente non valido", Toast.LENGTH_LONG).show();
+					}
+				});
 				return null;
 			}
 			NdefMessage ndefMessage = ndef.getCachedNdefMessage();

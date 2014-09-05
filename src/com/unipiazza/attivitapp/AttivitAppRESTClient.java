@@ -12,20 +12,20 @@ import com.koushikdutta.ion.Ion;
 
 public class AttivitAppRESTClient {
 	private static AttivitAppRESTClient instance;
+	private static Object lock = new Object();
 
-	public static AttivitAppRESTClient getInstance(Context context, boolean checkToken) {
+	public static AttivitAppRESTClient getInstance(Context context) {
 		if (instance == null) {
 			return new AttivitAppRESTClient();
 		} else {
 			synchronized (instance) {
-				if (checkToken)
-					CurrentShop.getInstance().checkToken(context);
 				return instance;
 			}
 		}
 	}
 
 	public void postAuthenticate(final Context context, final String email, final String password, final HttpCallback callback) {
+		Log.v("UNIPIAZZA", "postAuthenticate");
 		JsonObject json = new JsonObject();
 		json.addProperty("grant_type", "password");
 		json.addProperty("email", email);
@@ -59,7 +59,11 @@ public class AttivitAppRESTClient {
 
 	}
 
-	private void getUser(final Context context, final String access_token, final String refresh_token, final int expires_in, final String password, final HttpCallback callback) {
+	private void getUser(final Context context, final String access_token
+			, final String refresh_token, final int expires_in, final String password
+			, final HttpCallback callback) {
+		Log.v("UNIPIAZZA", "getUser");
+
 		String url = UnipiazzaParams.ME_URL + "?access_token=" + access_token;
 
 		Ion.with(context)
@@ -91,7 +95,6 @@ public class AttivitAppRESTClient {
 										, password
 										, prizes);
 								callback.onSuccess(result);
-								//getUserImg(context, image_url, callback);
 							} catch (Exception ex) {
 								ex.printStackTrace();
 								callback.onFail(result, ex);
@@ -99,10 +102,11 @@ public class AttivitAppRESTClient {
 						}
 					}
 				});
-
 	}
 
 	public void refreshToken(final Context context, final String refresh_token, final HttpCallback callback) {
+		Log.v("UNIPIAZZA", "refreshToken");
+
 		JsonObject json = new JsonObject();
 		json.addProperty("grant_type", "refresh_token");
 		json.addProperty("refresh_token", refresh_token);
@@ -138,7 +142,27 @@ public class AttivitAppRESTClient {
 
 	}
 
-	public void getSearchUser(final Context context, final String hash_pass, final HttpCallback callback) {
+	public void getSearchUser(final Context context, final String hash_pass, final boolean checkToken, final HttpCallback callback) {
+		if (checkToken) {
+			CurrentShop.getInstance().checkToken(context, new HttpCallback() {
+
+				@Override
+				public void onSuccess(JsonObject result) {
+					getSearchUserHttp(context, hash_pass, checkToken, callback);
+				}
+
+				@Override
+				public void onFail(JsonObject result, Throwable e) {
+				}
+			});
+		} else
+			getSearchUserHttp(context, hash_pass, checkToken, callback);
+
+	}
+
+	private void getSearchUserHttp(final Context context, final String hash_pass, boolean checkToken, final HttpCallback callback) {
+		Log.v("UNIPIAZZA", "getSearchUser");
+
 		String url;
 		String access_token = CurrentShop.getInstance().getAccessToken(context);
 		url = UnipiazzaParams.USER_SEARCH_URL + "?access_token=" + access_token + "&hash_pass=" + hash_pass;
@@ -186,10 +210,28 @@ public class AttivitAppRESTClient {
 							}
 						}
 				);
+	}
+
+	public void postReceipts(final Context context, final int user_id, final double coins, final String hash_type, final boolean checkToken, final HttpCallback callback) {
+		if (checkToken) {
+			CurrentShop.getInstance().checkToken(context, new HttpCallback() {
+
+				@Override
+				public void onSuccess(JsonObject result) {
+					postReceiptsHttp(context, user_id, coins, hash_type, checkToken, callback);
+				}
+
+				@Override
+				public void onFail(JsonObject result, Throwable e) {
+				}
+
+			});
+		} else
+			postReceiptsHttp(context, user_id, coins, hash_type, checkToken, callback);
 
 	}
 
-	public void postReceipts(final Context context, final int user_id, double coins, String hash_type, final HttpCallback callback) {
+	private void postReceiptsHttp(final Context context, final int user_id, final double coins, final String hash_type, boolean checkToken, final HttpCallback callback) {
 		JsonObject json = new JsonObject();
 		JsonObject jsonReceipt = new JsonObject();
 		jsonReceipt.addProperty("user_id", user_id);
@@ -221,10 +263,27 @@ public class AttivitAppRESTClient {
 							callback.onFail(result, e);
 					}
 				});
+	}
+
+	public void postGift(final Context context, final int user_id, final int product_id, final String hash_type, final boolean checkToken, final HttpCallback callback) {
+		if (checkToken) {
+			CurrentShop.getInstance().checkToken(context, new HttpCallback() {
+
+				@Override
+				public void onSuccess(JsonObject result) {
+					postGiftHttp(context, user_id, product_id, hash_type, checkToken, callback);
+				}
+
+				@Override
+				public void onFail(JsonObject result, Throwable e) {
+				}
+			});
+		} else
+			postGiftHttp(context, user_id, product_id, hash_type, checkToken, callback);
 
 	}
 
-	public void postGift(final Context context, final int user_id, int product_id, String hash_type, final HttpCallback callback) {
+	private void postGiftHttp(final Context context, final int user_id, final int product_id, final String hash_type, boolean checkToken, final HttpCallback callback) {
 		JsonObject json = new JsonObject();
 		JsonObject jsonReceipt = new JsonObject();
 		jsonReceipt.addProperty("user_id", user_id);
@@ -257,7 +316,6 @@ public class AttivitAppRESTClient {
 					}
 
 				});
-
 	}
 
 }

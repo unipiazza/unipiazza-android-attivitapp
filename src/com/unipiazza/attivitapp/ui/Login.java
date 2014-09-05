@@ -169,7 +169,7 @@ public class Login extends Activity implements OnClickListener {
 			// Building Parameters
 			Log.v("UNIPIAZZA", "username=" + email + " password=" + password);
 
-			AttivitAppRESTClient.getInstance(Login.this, false).postAuthenticate(Login.this, email, password, new HttpCallback() {
+			AttivitAppRESTClient.getInstance(Login.this).postAuthenticate(Login.this, email, password, new HttpCallback() {
 
 				@Override
 				public void onSuccess(JsonObject result) {
@@ -183,7 +183,7 @@ public class Login extends Activity implements OnClickListener {
 
 				@Override
 				public void onFail(JsonObject result, Throwable e) {
-					if (result != null)
+					if (result != null && result.get("msg") != null)
 						Toast.makeText(Login.this, result.get("msg").getAsString(), Toast.LENGTH_LONG).show();
 					else if (e != null)
 						Toast.makeText(Login.this, e.toString(), Toast.LENGTH_LONG).show();

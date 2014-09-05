@@ -100,8 +100,8 @@ public class UpdateCoins extends Activity {
 			avatar.setImageResource(R.drawable.user_icon_f);
 
 		if (!gift)
-			AttivitAppRESTClient.getInstance(UpdateCoins.this, true).postReceipts(UpdateCoins.this
-					, CurrentUser.getInstance().getId(), Integer.parseInt(saldo), CurrentUser.getInstance().getPass(), new HttpCallback() {
+			AttivitAppRESTClient.getInstance(UpdateCoins.this).postReceipts(UpdateCoins.this
+					, CurrentUser.getInstance().getId(), Integer.parseInt(saldo), CurrentUser.getInstance().getPass(), true, new HttpCallback() {
 
 						@Override
 						public void onSuccess(JsonObject result) {
@@ -122,8 +122,8 @@ public class UpdateCoins extends Activity {
 						}
 					});
 		else
-			AttivitAppRESTClient.getInstance(UpdateCoins.this, true).postGift(UpdateCoins.this
-					, CurrentUser.getInstance().getId(), Integer.parseInt(gift_id), CurrentUser.getInstance().getPass(), new HttpCallback() {
+			AttivitAppRESTClient.getInstance(UpdateCoins.this).postGift(UpdateCoins.this
+					, CurrentUser.getInstance().getId(), Integer.parseInt(gift_id), CurrentUser.getInstance().getPass(), true, new HttpCallback() {
 
 						@Override
 						public void onSuccess(JsonObject result) {

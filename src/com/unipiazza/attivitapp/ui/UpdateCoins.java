@@ -101,7 +101,6 @@ public class UpdateCoins extends Activity {
 		if (!gift)
 			AttivitAppRESTClient.getInstance(UpdateCoins.this).postReceipts(UpdateCoins.this
 					, CurrentUser.getInstance().getId(), saldo, CurrentUser.getInstance().getPass(), true, new HttpCallback() {
-
 						@Override
 						public void onSuccess(JsonObject result) {
 							updateLayout.setVisibility(View.VISIBLE);

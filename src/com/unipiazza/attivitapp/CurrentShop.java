@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.google.gson.JsonObject;
 
 public class CurrentShop extends User {
 
@@ -37,19 +40,34 @@ public class CurrentShop extends User {
 		String refresh_token = pref.getString("refresh_token", "");
 
 		if (!access_token.isEmpty() && !email.isEmpty() && !refresh_token.isEmpty()) {
-			AttivitAppRESTClient.getInstance(context, true).refreshToken(context, refresh_token, callback);
+			callback.onSuccess(null);
 		} else
 			callback.onFail(null, null);
 	}
 
-	public void checkToken(Context context) {
+	public void checkToken(Context context, final HttpCallback callback) {
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
 		int expires_in = pref.getInt("expires_in", 0);
 		long token_date = pref.getLong("token_date", 0);
-		if (System.currentTimeMillis() - token_date >= expires_in) {
+		Log.v("UNIPIAZZA", "System.currentTimeMillis() - token_date=" + (System.currentTimeMillis() - token_date));
+		Log.v("UNIPIAZZA", "expires_in=" + expires_in * 1000);
+
+		if (System.currentTimeMillis() - token_date >= expires_in * 1000) { //expires_in in seconds
 			String refresh_token = pref.getString("refresh_token", "");
-			AttivitAppRESTClient.getInstance(context, false).refreshToken(context, refresh_token, null);
-		}
+			AttivitAppRESTClient.getInstance(context).refreshToken(context, refresh_token, new HttpCallback() {
+
+				@Override
+				public void onSuccess(JsonObject result) {
+					callback.onSuccess(result);
+				}
+
+				@Override
+				public void onFail(JsonObject result, Throwable e) {
+					callback.onFail(result, e);
+				}
+			});
+		} else
+			callback.onSuccess(null);
 	}
 
 	public void setAuthenticated(Context context, String email, String first_name, String access_token
@@ -103,6 +121,15 @@ public class CurrentShop extends User {
 
 	public ArrayList<Prize> getPrizes() {
 		return prizes;
+	}
+
+	public ArrayList<Prize> getFilteredPrizes(int coins) {
+		ArrayList<Prize> filteredPrize = new ArrayList<Prize>();
+		for (Prize prize : prizes) {
+			if (prize.getCoins() <= coins)
+				filteredPrize.add(prize);
+		}
+		return filteredPrize;
 	}
 
 	public void setPrizes(ArrayList<Prize> prizes) {

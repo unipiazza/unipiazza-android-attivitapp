@@ -28,13 +28,12 @@ public class CurrentUser extends User {
 		super();
 	}
 
-	public void setUser(Context context, String email, String first_name, String last_name, String image_url
+	public void setUser(Context context, String first_name, String last_name
 			, int unipoints, int id, String pass, boolean gender) {
 		this.id = id;
 		this.first_name = first_name;
 		Log.v("UNIPIAZZA", "last_name=" + last_name);
 		this.last_name = last_name;
-		this.image_url = image_url;
 		this.pass = pass;
 		this.unipoints = unipoints;
 		this.gender = gender;

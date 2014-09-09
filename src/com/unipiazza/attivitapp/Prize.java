@@ -5,11 +5,13 @@ public class Prize {
 	private int id;
 	private String name;
 	private int coins;
+	private String title;
 
-	public Prize(int id, String name, int coins) {
+	public Prize(int id, String title, String name, int coins) {
 		this.id = id;
 		this.name = name;
 		this.coins = coins;
+		this.title = title;
 	}
 
 	public Prize() {
@@ -37,6 +39,14 @@ public class Prize {
 
 	public void setCoins(int coins) {
 		this.coins = coins;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

@@ -55,7 +55,6 @@ public class UpdateCoins extends Activity {
 			updateLayout = (LinearLayout) findViewById(R.id.update_gift_layout);
 			progresssCoins = (ProgressBar) findViewById(R.id.progressCoinsGift);
 			gift_id = (String) i.getSerializableExtra("gift_id");
-
 		} else {
 			gift = false;
 			setContentView(R.layout.update_layout);
@@ -100,16 +99,18 @@ public class UpdateCoins extends Activity {
 			avatar.setImageResource(R.drawable.user_icon_f);
 
 		if (!gift)
-			AttivitAppRESTClient.getInstance(UpdateCoins.this, true).postReceipts(UpdateCoins.this
-					, CurrentUser.getInstance().getId(), Integer.parseInt(saldo), CurrentUser.getInstance().getPass(), new HttpCallback() {
+			AttivitAppRESTClient.getInstance(UpdateCoins.this).postReceipts(UpdateCoins.this
+					, CurrentUser.getInstance().getId(), saldo, CurrentUser.getInstance().getPass(), true, new HttpCallback() {
 
 						@Override
 						public void onSuccess(JsonObject result) {
 							updateLayout.setVisibility(View.VISIBLE);
 							progresssCoins.setVisibility(View.GONE);
 							final TextView text_saldo = (TextView) findViewById(R.id.saldoview);
-							int coins = CurrentUser.getInstance().getTotal_coins() + Integer.parseInt(saldo);
-							text_saldo.setText(coins + "");
+							try {
+								text_saldo.setText(result.get("user_coins").getAsString());
+							} catch (NullPointerException e) {
+							}
 						}
 
 						@Override
@@ -122,16 +123,18 @@ public class UpdateCoins extends Activity {
 						}
 					});
 		else
-			AttivitAppRESTClient.getInstance(UpdateCoins.this, true).postGift(UpdateCoins.this
-					, CurrentUser.getInstance().getId(), Integer.parseInt(gift_id), CurrentUser.getInstance().getPass(), new HttpCallback() {
+			AttivitAppRESTClient.getInstance(UpdateCoins.this).postGift(UpdateCoins.this
+					, CurrentUser.getInstance().getId(), Integer.parseInt(gift_id), CurrentUser.getInstance().getPass(), true, new HttpCallback() {
 
 						@Override
 						public void onSuccess(JsonObject result) {
 							updateLayout.setVisibility(View.VISIBLE);
 							progresssCoins.setVisibility(View.GONE);
 							final TextView text_saldo = (TextView) findViewById(R.id.saldoview);
-							int coins = CurrentUser.getInstance().getTotal_coins() + Integer.parseInt(saldo);
-							text_saldo.setText(coins + "");
+							try {
+								text_saldo.setText(result.get("user_coins").getAsString());
+							} catch (NullPointerException e) {
+							}
 						}
 
 						@Override

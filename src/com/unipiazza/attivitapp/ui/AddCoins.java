@@ -51,13 +51,13 @@ public class AddCoins extends Activity implements OnClickListener {
 	public ExpandableListView gv;
 	protected HashMap<String, Integer> categoryBadged;
 	int prodottiTotali = 0;
-	Boolean comma_check = false;
 	private TextView txtResult; // Reference to EditText of result
 	private int result = 0; // Result of computation
 	private String inStr = "0"; // Current input string
 	private NfcAdapter mNfcAdapter;
 	private PendingIntent pendingIntent;
 	private String[][] techListsArray;
+	private Button comma;
 	public static final String MIME_TEXT_PLAIN = "text/plain";
 
 	@Override
@@ -85,7 +85,8 @@ public class AddCoins extends Activity implements OnClickListener {
 		((Button) findViewById(R.id.btnNum8Id)).setOnClickListener(listener);
 		((Button) findViewById(R.id.btnNum9Id)).setOnClickListener(listener);
 		((Button) findViewById(R.id.btnBack)).setOnClickListener(listener);
-		((Button) findViewById(R.id.btnComma)).setOnClickListener(listener);
+		comma = (Button) findViewById(R.id.btnComma);
+		comma.setOnClickListener(listener);
 
 		prepareNFCIntercept();
 	}
@@ -99,62 +100,74 @@ public class AddCoins extends Activity implements OnClickListener {
 			switch (view.getId()) {
 			// Number buttons: '0' to '9'
 			case R.id.btnNum00Id:
+				break;
 			case R.id.btnNum0Id:
+				break;
 			case R.id.btnNum1Id:
+				break;
 			case R.id.btnNum2Id:
+				break;
 			case R.id.btnNum3Id:
+				break;
 			case R.id.btnNum4Id:
+				break;
 			case R.id.btnNum5Id:
+				break;
 			case R.id.btnNum6Id:
+				break;
 			case R.id.btnNum7Id:
+				break;
 			case R.id.btnNum8Id:
+				break;
 			case R.id.btnNum9Id:
+				break;
 			case R.id.btnComma:
-				String inDigit = ((Button) view).getText().toString();
-				if (inDigit.equals(","))
-					comma_check = true;
-				if (inStr.equals("0") || inStr.equals("0,")) {
-					if (inDigit.equals("00")) {
-						inStr = "0";
-						v.vibrate(100);
-					}
-					else if (inDigit.equals(",")) {
-						inStr = "0,";
-						v.vibrate(100);
-					}
-					else if (inStr.equals("0,") && (!inDigit.equals("0") || !inDigit.equals("00"))) {
-						inStr = "0," + inDigit;
-						v.vibrate(100);
-					}
-					else {
-						inStr = inDigit; // no leading zero
-						v.vibrate(100);
-					}
-				}
-				else if (inStr.length() > 5) // Dimensione max cifra = 5
-					break;
-				else {
-					inStr += inDigit; // accumulate input digit
-					v.vibrate(100);
-
-				}
-				txtResult.setText(inStr);
-				// Clear buffer if last operator is '='
+				comma.setEnabled(false);
 				break;
 			// Clear button
 			case R.id.btnBack:
 				String str = txtResult.getText().toString().trim();
 				if (str.length() != 0) {
+					String charToRemove = str.substring(str.length() - 1);
+					if (charToRemove.equals(","))
+						comma.setEnabled(true);
 					str = str.substring(0, str.length() - 1);
 					txtResult.setText(str);
 					inStr = str;
 					if (str.length() < 1) {
+						Log.v("UNipiazza", "setText 0");
 						txtResult.setText("0");
 						inStr = "0";
 					}
 				}
 				break;
 			}
+			String inDigit = ((Button) view).getText().toString();
+			if (inStr.equals("0") || inStr.equals("0,")) {
+				if (inDigit.equals("00")) {
+					inStr = "0";
+					v.vibrate(100);
+				}
+				else if (inDigit.equals(",")) {
+					inStr = "0,";
+					v.vibrate(100);
+				}
+				else if (inStr.equals("0,") && (!inDigit.equals("0") || !inDigit.equals("00"))) {
+					inStr = "0," + inDigit;
+					v.vibrate(100);
+				}
+				else if (inDigit.length() > 0) {
+					inStr = inDigit; // no leading zero
+					v.vibrate(100);
+				}
+			}
+			else if (inStr.length() > 5) // Dimensione max cifra = 5
+				return;
+			else {
+				inStr += inDigit; // accumulate input digit
+				v.vibrate(100);
+			}
+			txtResult.setText(inStr);
 		}
 
 		// Perform computation on the previous result and the current input number,
@@ -194,7 +207,7 @@ public class AddCoins extends Activity implements OnClickListener {
 							Log.v("value ", "Saldo da passare con intent = " + result);
 							SharedPreferences sp4 = PreferenceManager.getDefaultSharedPreferences(AddCoins.this);
 							Editor edit = sp4.edit();
-							String result = txtResult.getText().toString();
+							String result = txtResult.getText().toString().replace(",", ".");
 							i.putExtra("gift_value", gift_value);
 							edit.putString("saldo", result);
 							edit.commit();

@@ -1,7 +1,6 @@
 package com.unipiazza.attivitapp.ui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.JSONArray;
 
@@ -30,10 +29,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.unipiazza.attivitapp.CurrentShop;
+import com.unipiazza.attivitapp.CurrentUser;
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.Prize;
 import com.unipiazza.attivitapp.R;
@@ -46,13 +45,13 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 	Button back_button;
 	private static final String READ_GIFT_PRODUCTS_URL = "http://attivitapp.herokuapp.com/giftproduct.php";
 	private static final String TAG_POSTS = "products";
-	private static final String TAG_NAME = "name";
+	protected static final String TAG_NAME = "name";
 	private static final String TAG_PRICE = "coins";
 	private static final String TAG_ID_PRODUCT = "id";
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_MESSAGE = "message";
 	private JSONArray mProducts = null;
-	private ArrayList<HashMap<String, String>> mProductList;
+	private ArrayList<Prize> mProductList;
 	private NfcAdapter mNfcAdapter;
 	private PendingIntent pendingIntent;
 	private String[][] techListsArray;
@@ -73,22 +72,11 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 	 * Retrieves recent post data from the server.
 	 */
 	public void updateJSONdata() {
-		ArrayList<Prize> prizes = CurrentShop.getInstance().getPrizes();
-		mProductList = new ArrayList<HashMap<String, String>>();
-
-		for (Prize prize : prizes) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put(TAG_NAME, prize.getName());
-			map.put(TAG_ID_PRODUCT, prize.getId() + "");
-			map.put(TAG_PRICE, prize.getCoins() + "");
-			// adding HashList to ArrayList
-			mProductList.add(map);
-		}
+		mProductList = CurrentShop.getInstance().getFilteredPrizes(CurrentUser.getInstance().getTotal_coins());
 	}
 
 	private void updateList() {
-		ListAdapter adapter = new SimpleAdapter(this, mProductList,
-				R.layout.single_gift, new String[] { TAG_NAME, TAG_PRICE }, new int[] { R.id.name, R.id.coins });
+		ListAdapter adapter = new GiftListAdapter(this, mProductList);
 		setListAdapter(adapter);
 		ListView lv = getListView();
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -101,9 +89,9 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 						switch (which) {
 						case DialogInterface.BUTTON_POSITIVE:
 							String gift_value = "yes";
-							String gift_coins = mProductList.get(+InternalPosition).get("coins");
-							String gift_name = mProductList.get(+InternalPosition).get("name");
-							String gift_id = mProductList.get(+InternalPosition).get("id");
+							String gift_coins = mProductList.get(+InternalPosition).getCoins() + "";
+							String gift_name = mProductList.get(+InternalPosition).getName();
+							String gift_id = mProductList.get(+InternalPosition).getId() + "";
 							Intent i = new Intent(GiftActivity.this, UpdateCoins.class);
 							i.putExtra("gift_coins", gift_coins);
 							i.putExtra("gift_value", gift_value);
@@ -122,7 +110,7 @@ public class GiftActivity extends ListActivity implements OnClickListener {
 					}
 				};
 				AlertDialog.Builder builder = new AlertDialog.Builder(GiftActivity.this);
-				builder.setMessage("Confermi " + mProductList.get(+InternalPosition).get("name") + "?").setPositiveButton("Si", dialogClickListener)
+				builder.setMessage("Confermi " + mProductList.get(+InternalPosition).getName() + "?").setPositiveButton("Si", dialogClickListener)
 						.setNegativeButton("No", dialogClickListener);
 
 				AlertDialog dialog = builder.create();

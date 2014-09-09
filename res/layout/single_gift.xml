@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/box"
-	    android:layout_width="match_parent"
-	    android:layout_height="60dp"
-	    android:layout_marginTop="5dp"
-	    android:layout_marginBottom="10dp"
-	    android:background="#CCC"
-	    android:orientation="horizontal"
-	    android:padding="10dp" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/box"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="5dp"
+    android:background="#CCC"
+    android:orientation="horizontal"
+    android:padding="7dp" >
 
-		<ImageView
-		    android:id="@+id/icon"
-		    android:layout_width="42dp"
-		    android:layout_height="42dp"
-		    android:src="@drawable/icon_diamond" />
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_weight="0.2" />
 
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginLeft="12dp"
-                    android:textSize="22sp" >
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="2dp"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:textColor="#000"
+        android:textSize="20sp" >
+    </TextView>
 
-                </TextView>
-        	   
-                <TextView
-                    android:id="@+id/coins"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:gravity="right"
-                    android:textColor="#000"
-                    android:textSize="25sp" >
+    <TextView
+        android:id="@+id/coins"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_weight="0.3"
+        android:singleLine="true"
+        android:textColor="#000"
+        android:textSize="25sp" >
+    </TextView>
 
-                </TextView>
-
-                <ImageView
-                    android:id="@+id/coin_image"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginLeft="7dp"
-                    android:src="@drawable/coin" />
+    <ImageView
+        android:id="@+id/coin_image"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_weight="0.2"
+        android:src="@drawable/coin" />
 
 </LinearLayout>

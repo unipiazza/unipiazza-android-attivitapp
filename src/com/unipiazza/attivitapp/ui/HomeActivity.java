@@ -62,7 +62,7 @@ public class HomeActivity extends Activity {
 		CurrentUser currentUser = CurrentUser.getInstance();
 
 		String user = currentUser.getFirst_name();
-		String user_lastname = currentUser.getLast_name().substring(0, 1) + ".";
+		String user_lastname = currentUser.getLast_name().substring(0, 1);
 
 		int coins = currentUser.getTotal_coins();
 

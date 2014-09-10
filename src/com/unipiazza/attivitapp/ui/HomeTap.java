@@ -303,7 +303,7 @@ public class HomeTap extends Activity {
 					@Override
 					public void onFail(JsonObject result, Throwable e) {
 						pDialog.dismiss();
-						if (result != null)
+						if (result != null && result.get("msg") != null)
 							Toast.makeText(HomeTap.this, result.get("msg").getAsString(), Toast.LENGTH_LONG).show();
 						else if (e != null)
 							Toast.makeText(HomeTap.this, e.toString(), Toast.LENGTH_LONG).show();

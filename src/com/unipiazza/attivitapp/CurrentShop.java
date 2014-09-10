@@ -85,6 +85,7 @@ public class CurrentShop extends User {
 		edit.putString("email", email);
 		edit.putString("password", password);
 		edit.putString("refresh_token", refresh_token);
+		edit.putLong("token_date", System.currentTimeMillis());
 		edit.putInt("expires_in", expires_in);
 		edit.putInt("id_attivita", id);
 		edit.commit();

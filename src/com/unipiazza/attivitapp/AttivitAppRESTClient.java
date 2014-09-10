@@ -12,7 +12,6 @@ import com.koushikdutta.ion.Ion;
 
 public class AttivitAppRESTClient {
 	private static AttivitAppRESTClient instance;
-	private static Object lock = new Object();
 
 	public static AttivitAppRESTClient getInstance(Context context) {
 		if (instance == null) {
@@ -62,8 +61,6 @@ public class AttivitAppRESTClient {
 	private void getUser(final Context context, final String access_token
 			, final String refresh_token, final int expires_in, final String password
 			, final HttpCallback callback) {
-		Log.v("UNIPIAZZA", "getUser");
-
 		String url = UnipiazzaParams.ME_URL + "?access_token=" + access_token;
 
 		Ion.with(context)
@@ -188,11 +185,15 @@ public class AttivitAppRESTClient {
 
 									if (e == null) {
 										String hash_type = "";
-										if
-										(hash_pass.equals(result.get("hash_keychain").getAsString()))
+										if (result.get("hash_keychain") != null
+												&& hash_pass.equals(result.get("hash_keychain").getAsString()))
 											hash_type = "keychain";
-										else
+										else if (result.get("hash_card") != null
+												&& hash_pass.equals(result.get("hash_card").getAsString()))
 											hash_type = "card";
+										else if (result.get("hash_phone") != null
+												&& hash_pass.equals(result.get("hash_phone").getAsString()))
+											hash_type = "phone";
 										CurrentUser.getInstance().setUser(context,
 												result.get("first_name").getAsString(),
 												result.get("last_name").getAsString(),

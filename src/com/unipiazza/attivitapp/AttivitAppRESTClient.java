@@ -58,7 +58,7 @@ public class AttivitAppRESTClient {
 
 	}
 
-	private void getUser(final Context context, final String access_token
+	public void getUser(final Context context, final String access_token
 			, final String refresh_token, final int expires_in, final String password
 			, final HttpCallback callback) {
 		String url = UnipiazzaParams.ME_URL + "?access_token=" + access_token;

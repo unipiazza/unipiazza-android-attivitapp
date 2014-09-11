@@ -39,7 +39,7 @@ public class CurrentShop extends User {
 		String email = pref.getString("email", "");
 		String refresh_token = pref.getString("refresh_token", "");
 
-		if (!access_token.isEmpty() && !email.isEmpty() && !refresh_token.isEmpty()) {
+		if (!access_token.isEmpty() && !email.isEmpty() && !refresh_token.isEmpty() && CurrentShop.getInstance().getFirst_name() != null) {
 			callback.onSuccess(null);
 		} else
 			callback.onFail(null, null);

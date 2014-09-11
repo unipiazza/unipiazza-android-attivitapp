@@ -1,5 +1,7 @@
 package com.unipiazza.attivitapp.ui;
 
+import java.util.concurrent.TimeoutException;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -114,7 +116,10 @@ public class UpdateCoins extends Activity {
 
 						@Override
 						public void onFail(JsonObject result, Throwable e) {
-							Toast.makeText(UpdateCoins.this, "Errore nell'invio dei dati", Toast.LENGTH_LONG).show();
+							if (e instanceof TimeoutException)
+								Toast.makeText(UpdateCoins.this, "Problema con la connessione internet", Toast.LENGTH_LONG).show();
+							else
+								Toast.makeText(UpdateCoins.this, "Errore nell'invio dei dati", Toast.LENGTH_LONG).show();
 							Log.v("value ", "Errore ");
 							//Intent i_error = new Intent(UpdateCoins.this, Home.class);
 							finish();
@@ -138,7 +143,10 @@ public class UpdateCoins extends Activity {
 
 						@Override
 						public void onFail(JsonObject result, Throwable e) {
-							Toast.makeText(UpdateCoins.this, "Errore nell'invio dei dati", Toast.LENGTH_LONG).show();
+							if (e instanceof TimeoutException)
+								Toast.makeText(UpdateCoins.this, "Problema con la connessione internet", Toast.LENGTH_LONG).show();
+							else
+								Toast.makeText(UpdateCoins.this, "Errore nell'invio dei dati", Toast.LENGTH_LONG).show();
 							Log.v("value ", "Errore ");
 							//Intent i_error = new Intent(UpdateCoins.this, HomeTap.class);
 							finish();

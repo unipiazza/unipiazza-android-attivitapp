@@ -1,6 +1,7 @@
 package com.unipiazza.attivitapp.ui;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -31,6 +32,7 @@ import com.unipiazza.attivitapp.AttivitAppRESTClient;
 import com.unipiazza.attivitapp.CurrentShop;
 import com.unipiazza.attivitapp.HttpCallback;
 import com.unipiazza.attivitapp.JSONParser;
+import com.unipiazza.attivitapp.NetworkReceiver;
 import com.unipiazza.attivitapp.R;
 
 public class HomeTap extends Activity {
@@ -99,11 +101,12 @@ public class HomeTap extends Activity {
 					return;
 				}
 				if (!mNfcAdapter.isEnabled()) {
-					mTextView.setText("L'NFC � disabilitato, abilitalo e riavvia.");
+					mTextView.setText("L'NFC è disabilitato, abilitalo e riavvia.");
 				} else {
 					mTextView.setText(R.string.explanation);
 				}
 				handleIntent(getIntent());
+				NetworkReceiver.first = false;
 			}
 
 			@Override
@@ -305,8 +308,12 @@ public class HomeTap extends Activity {
 						pDialog.dismiss();
 						if (result != null && result.get("msg") != null)
 							Toast.makeText(HomeTap.this, result.get("msg").getAsString(), Toast.LENGTH_LONG).show();
-						else if (e != null)
-							Toast.makeText(HomeTap.this, e.toString(), Toast.LENGTH_LONG).show();
+						else if (e != null) {
+							if (e instanceof TimeoutException)
+								Toast.makeText(HomeTap.this, "Problema con la connessione internet", Toast.LENGTH_LONG).show();
+							else
+								Toast.makeText(HomeTap.this, e.toString(), Toast.LENGTH_LONG).show();
+						}
 
 					}
 				});

@@ -1,5 +1,7 @@
 package com.unipiazza.attivitapp.ui;
 
+import java.util.concurrent.TimeoutException;
+
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -8,6 +10,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.nfc.NfcAdapter;
@@ -41,6 +45,7 @@ public class Login extends Activity implements OnClickListener {
 	private SharedPreferences sp;
 	private String email;
 	private String password;
+	private TextView version;
 
 	// Classe di controllo connessione
 	public class ConnectionDetector {
@@ -69,6 +74,7 @@ public class Login extends Activity implements OnClickListener {
 		setContentView(R.layout.login);
 		user = (EditText) findViewById(R.id.username);
 		pass = (EditText) findViewById(R.id.password);
+		version = (TextView) findViewById(R.id.version);
 
 		mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -95,6 +101,15 @@ public class Login extends Activity implements OnClickListener {
 		});
 		mSubmit = (Button) findViewById(R.id.login);
 		mSubmit.setOnClickListener(this);
+
+		PackageInfo pInfo;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			String versionString = pInfo.versionName;
+			version.setText("Versione " + versionString);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
@@ -185,8 +200,12 @@ public class Login extends Activity implements OnClickListener {
 				public void onFail(JsonObject result, Throwable e) {
 					if (result != null && result.get("msg") != null)
 						Toast.makeText(Login.this, result.get("msg").getAsString(), Toast.LENGTH_LONG).show();
-					else if (e != null)
-						Toast.makeText(Login.this, "Username o password errate", Toast.LENGTH_LONG).show();
+					else if (e != null) {
+						if (e instanceof TimeoutException)
+							Toast.makeText(Login.this, "Problema con la connessione internet", Toast.LENGTH_LONG).show();
+						else
+							Toast.makeText(Login.this, "Username o password errate", Toast.LENGTH_LONG).show();
+					}
 					pDialog.dismiss();
 				}
 			});
@@ -195,5 +214,4 @@ public class Login extends Activity implements OnClickListener {
 			pDialog.dismiss();
 		}
 	}
-
 }

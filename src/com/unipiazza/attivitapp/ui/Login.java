@@ -85,7 +85,7 @@ public class Login extends Activity implements OnClickListener {
 
 		if (!email.isEmpty() && id_attivita != 0) {
 			user.setText(email);
-			postAuthenticate();
+			pass.setText(password);
 		}
 
 		pass.setOnEditorActionListener(new OnEditorActionListener() {

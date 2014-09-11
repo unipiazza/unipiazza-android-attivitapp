@@ -32,7 +32,6 @@ import com.unipiazza.attivitapp.AttivitAppRESTClient;
 import com.unipiazza.attivitapp.CurrentShop;
 import com.unipiazza.attivitapp.HttpCallback;
 import com.unipiazza.attivitapp.JSONParser;
-import com.unipiazza.attivitapp.NetworkReceiver;
 import com.unipiazza.attivitapp.R;
 
 public class HomeTap extends Activity {
@@ -106,7 +105,6 @@ public class HomeTap extends Activity {
 					mTextView.setText(R.string.explanation);
 				}
 				handleIntent(getIntent());
-				NetworkReceiver.first = false;
 			}
 
 			@Override

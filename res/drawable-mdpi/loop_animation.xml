@@ -1,0 +1,41 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false" >
+    <item
+    android:drawable="@drawable/tap1"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap2"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap3"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap4"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap5"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap6"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap7"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap8"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap9"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap10"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap11"
+    android:duration="200"/>
+<item
+    android:drawable="@drawable/tap12"
+    android:duration="200"/>
+
+
+</animation-list>

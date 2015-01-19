@@ -21,7 +21,6 @@
             android:gravity="center"
             android:text="@string/read_comments_title"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
     </LinearLayout>
 
     <ListView
@@ -49,23 +48,26 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="horizontal" >
-		<LinearLayout
-            android:layout_width="10dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical" >
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:text="@string/total"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-             <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-           </LinearLayout>
+                android:layout_weight="2"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/canc_products"
@@ -88,9 +90,7 @@
                 android:background="@drawable/black_button"
                 android:onClick="addComment"
                 android:text="@string/button_send" />
-
         </LinearLayout>
-
     </LinearLayout>
 
 </RelativeLayout>

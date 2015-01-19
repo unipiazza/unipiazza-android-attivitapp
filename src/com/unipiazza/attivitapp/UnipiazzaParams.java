@@ -11,5 +11,4 @@ public class UnipiazzaParams {
 	public static final String USER_SEARCH_URL = BASE_URL + "api/search";
 	public static final String RECEIPTS_URL = BASE_URL + "api/receipts";
 	public static final String PRIZE_URL = BASE_URL + "api/prizes";
-
 }

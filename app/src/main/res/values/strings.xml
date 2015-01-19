@@ -69,6 +69,8 @@
     <string name="num_8">8</string>
     <string name="num_9">9</string>
     <string name="comma">,</string>
+    <string name="toshl_style_disabled">Enable Toshl Style</string>
+    <string name="toshl_style_enabled">Disable Toshl Style</string>
 
     <!-- Colori Btn.xml -->
     <color name="black">#000</color>

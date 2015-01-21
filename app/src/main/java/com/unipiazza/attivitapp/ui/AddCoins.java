@@ -185,7 +185,7 @@ public class AddCoins extends Activity implements OnClickListener {
                 String cleanString = inStr.toString().replaceAll("[" + euro + ",.]", "");
                 String stringTemp = cleanString + inDigit;
                 String formatted = NumberFormat.getCurrencyInstance().format((Double.parseDouble(stringTemp) / 100));
-                formatted = formatted.replace(euro, "").substring(0, formatted.length() - 2);
+                formatted = formatted.replace(euro, "").replace(" ", "");
                 inStr = formatted;
                 v.vibrate(100);
             }

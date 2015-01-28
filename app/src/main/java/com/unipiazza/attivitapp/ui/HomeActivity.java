@@ -152,14 +152,6 @@ public class HomeActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent i = new Intent(HomeActivity.this, HomeTap.class);
-        Log.v("action ", "Tasto indietro premuto");
-        startActivity(i);
-        finish();
-    }
-
     public void onPause() {
         super.onPause();
         mNfcAdapter.disableForegroundDispatch(this);

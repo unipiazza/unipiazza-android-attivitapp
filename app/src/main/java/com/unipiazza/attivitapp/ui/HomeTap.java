@@ -1,9 +1,11 @@
 package com.unipiazza.attivitapp.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -33,6 +35,7 @@ import com.unipiazza.attivitapp.HttpCallback;
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.R;
 import com.unipiazza.attivitapp.UnipiazzaParams;
+import com.unipiazza.attivitapp.UnipiazzaTokenException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeoutException;
@@ -172,6 +175,18 @@ public class HomeTap extends Activity {
                     && msg.getRecords()[0].toMimeType() != null
                     && new String(msg.getRecords()[0].toMimeType()).equals(UnipiazzaParams.NFC_DEVICE_MIMETYPE)) { //Android BEAM!
                 tag_id_string = new String(msg.getRecords()[0].getPayload());
+                if (tag_id_string.equals("0")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.no_user_title)
+                            .setMessage(R.string.no_user_error)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    builder.create().show();
+                    return;
+                }
                 Log.i("tag ID", tag_id_string);
                 Log.i("tag ID Appena preso", tag_id_string);
                 SharedPreferences sp19 = PreferenceManager
@@ -330,7 +345,11 @@ public class HomeTap extends Activity {
                         else
                             Toast.makeText(HomeTap.this, e.toString(), Toast.LENGTH_LONG).show();
                     }
-
+                    if (e != null && e instanceof UnipiazzaTokenException) {
+                        Intent i = new Intent(HomeTap.this, Login.class);
+                        finish();
+                        startActivity(i);
+                    }
                 }
             });
         }

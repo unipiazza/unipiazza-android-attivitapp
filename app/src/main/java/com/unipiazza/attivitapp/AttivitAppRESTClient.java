@@ -3,7 +3,10 @@ package com.unipiazza.attivitapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.TrafficStats;
 import android.os.BatteryManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -15,7 +18,14 @@ import com.koushikdutta.ion.Response;
 import java.util.ArrayList;
 
 public class AttivitAppRESTClient {
+
     private static AttivitAppRESTClient instance;
+
+    private static final String HEADER_STRING1 = "Accept";
+    private static final String HEADER_STRING2 = "application/unipiazza.v4";
+    private static final String HEADER_STRING3 = "Authorization";
+    private static final String HEADER_STRING4 = "Bearer ";
+    private static Long lastMobileData = 0L;
 
     public static AttivitAppRESTClient getInstance(Context context) {
         if (instance == null) {
@@ -30,7 +40,6 @@ public class AttivitAppRESTClient {
     public void postAuthenticate(final Context context, final String email, final String password, final HttpCallback callback) {
         Log.v("UNIPIAZZA", "postAuthenticate");
         JsonObject json = new JsonObject();
-        json.addProperty("grant_type", "password");
         json.addProperty("email", email);
         json.addProperty("password", password);
         json.addProperty("scope", "shop");
@@ -46,40 +55,13 @@ public class AttivitAppRESTClient {
                         Log.v("UNIPIAZZA", "postAuthenticate e=" + e);
                         if (e == null) {
                             try {
-                                String access_token = result.get("access_token").getAsString();
-                                String refresh_token = result.get("refresh_token").getAsString();
-                                int expires_in = result.get("expires_in").getAsInt();
-                                getUser(context, access_token, refresh_token, expires_in, password, callback);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                callback.onFail(result, ex);
-                            }
-                        } else
-                            callback.onFail(result, e);
-                    }
+                                JsonObject shopJson = result.get("shop").getAsJsonObject();
+                                String token = result.get("token").getAsString();
 
-                });
-
-    }
-
-    public void getUser(final Context context, final String access_token
-            , final String refresh_token, final int expires_in, final String password
-            , final HttpCallback callback) {
-        String url = UnipiazzaParams.ME_URL + "?access_token=" + access_token;
-
-        Ion.with(context)
-                .load(url)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        Log.v("UNIPIAZZA", "result=" + result);
-                        if (e == null) {
-                            try {
-                                String email = result.get("email").getAsString();
-                                String first_name = result.get("name").getAsString();
-                                int id = result.get("id").getAsInt();
-                                JsonArray prizesJson = result.get("prizes").getAsJsonArray();
+                                String email = shopJson.get("email").getAsString();
+                                String first_name = shopJson.get("name").getAsString();
+                                int id = shopJson.get("id").getAsInt();
+                                JsonArray prizesJson = shopJson.get("prizes").getAsJsonArray();
 
                                 ArrayList<Prize> prizes = new ArrayList<Prize>();
                                 for (int i = 0; i < prizesJson.size(); i++) {
@@ -94,7 +76,7 @@ public class AttivitAppRESTClient {
                                 }
 
                                 CurrentShop.getInstance().setAuthenticated(context, email, first_name
-                                        , access_token, refresh_token, expires_in
+                                        , token
                                         , id
                                         , password
                                         , prizes);
@@ -103,43 +85,8 @@ public class AttivitAppRESTClient {
                                 ex.printStackTrace();
                                 callback.onFail(result, ex);
                             }
-                        }
-                    }
-                });
-    }
-
-    public void refreshToken(final Context context, final String refresh_token, final HttpCallback callback) {
-        Log.v("UNIPIAZZA", "refreshToken");
-
-        JsonObject json = new JsonObject();
-        json.addProperty("grant_type", "refresh_token");
-        json.addProperty("refresh_token", refresh_token);
-
-        Ion.with(context)
-                .load(UnipiazzaParams.LOGIN_URL)
-                .setJsonObjectBody(json)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception e, JsonObject result) {
-                        Log.v("UNIPIAZZA", "refreshToken result=" + result);
-                        if (e == null) {
-                            try {
-                                String access_token = result.get("access_token").getAsString();
-                                String refresh_token = result.get("refresh_token").getAsString();
-                                int expires_in = result.get("expires_in").getAsInt();
-                                CurrentShop.getInstance().setToken(context, access_token, refresh_token, expires_in);
-                                if (callback != null)
-                                    callback.onSuccess(result);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                if (callback != null)
-                                    callback.onFail(result, ex);
-                            }
-                        } else {
-                            if (callback != null)
-                                callback.onFail(result, e);
-                        }
+                        } else
+                            callback.onFail(result, e);
                     }
 
                 });
@@ -157,7 +104,9 @@ public class AttivitAppRESTClient {
 
                 @Override
                 public void onFail(JsonObject result, Throwable e) {
+                    callback.onFail(result, e);
                 }
+
             });
         } else
             getSearchUserHttp(context, hash_pass, user_id, checkToken, callback);
@@ -169,15 +118,17 @@ public class AttivitAppRESTClient {
 
         String url;
         String access_token = CurrentShop.getInstance().getAccessToken(context);
-        url = UnipiazzaParams.USER_SEARCH_URL + "?access_token=" + access_token;
+        url = UnipiazzaParams.USER_SEARCH_URL;
         if (hash_pass != null)
-            url += "&hash_pass=" + hash_pass;
+            url += "?hash_pass=" + hash_pass;
         else if (user_id != null)
-            url += "&user_id=" + user_id;
+            url += "?user_id=" + user_id;
         Log.v("UNIPIAZZA", "url=" + url);
 
         Ion.with(context)
                 .load(url)
+                .addHeader(HEADER_STRING1, HEADER_STRING2)
+                .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .asJsonObject()
                 .setCallback(
                         new FutureCallback<JsonObject>() {
@@ -207,8 +158,7 @@ public class AttivitAppRESTClient {
                                                 result.get("gender").getAsBoolean());
                                         callback.onSuccess(result);
                                     } else {
-                                        callback.onFail(result,
-                                                e);
+                                        callback.onFail(result, e);
                                     }
                                 } catch (Exception ex) {
                                     ex.printStackTrace();
@@ -230,6 +180,7 @@ public class AttivitAppRESTClient {
 
                 @Override
                 public void onFail(JsonObject result, Throwable e) {
+                    callback.onFail(result, e);
                 }
 
             });
@@ -254,10 +205,12 @@ public class AttivitAppRESTClient {
 
         String url;
         String access_token = CurrentShop.getInstance().getAccessToken(context);
-        url = UnipiazzaParams.RECEIPTS_URL + "?access_token=" + access_token;
+        url = UnipiazzaParams.RECEIPTS_URL;
 
         Ion.with(context)
                 .load(url)
+                .addHeader(HEADER_STRING1, HEADER_STRING2)
+                .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .setJsonObjectBody(json)
                 .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
 
@@ -292,6 +245,7 @@ public class AttivitAppRESTClient {
 
                 @Override
                 public void onFail(JsonObject result, Throwable e) {
+                    callback.onFail(result, e);
                 }
             });
         } else
@@ -309,10 +263,12 @@ public class AttivitAppRESTClient {
 
         String url;
         String access_token = CurrentShop.getInstance().getAccessToken(context);
-        url = UnipiazzaParams.PRIZE_URL + "?access_token=" + access_token;
+        url = UnipiazzaParams.PRIZE_URL;
 
         Ion.with(context)
                 .load(url)
+                .addHeader(HEADER_STRING1, HEADER_STRING2)
+                .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .setJsonObjectBody(json)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -337,7 +293,7 @@ public class AttivitAppRESTClient {
                 });
     }
 
-    public void postPing(final Context context, final boolean checkToken) {
+    public void postPing(final Context context, final boolean checkToken, final HttpCallback callback) {
         if (checkToken) {
             CurrentShop.getInstance().checkToken(context, new HttpCallback() {
 
@@ -348,6 +304,8 @@ public class AttivitAppRESTClient {
 
                 @Override
                 public void onFail(JsonObject result, Throwable e) {
+                    if (callback != null)
+                        callback.onFail(result, new UnipiazzaTokenException());
                 }
             });
         } else
@@ -356,7 +314,7 @@ public class AttivitAppRESTClient {
     }
 
     public void postPingHttp(final Context context) {
-        String url = UnipiazzaParams.PING + "?access_token=" + CurrentShop.getInstance().getAccessToken(context);
+        String url = UnipiazzaParams.PING;
 
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent batteryStatus = context.registerReceiver(null, ifilter);
@@ -369,26 +327,49 @@ public class AttivitAppRESTClient {
         float level = extra_level / (float) scale * 100.0f;
 
         JsonObject bodyShop = new JsonObject();
-        JsonObject body = new JsonObject();
         bodyShop.addProperty("battery_level", level);
         bodyShop.addProperty("battery_isCharging", isCharging);
-        body.add("shop", bodyShop);
+        bodyShop.addProperty("token", CurrentShop.getInstance().getAccessToken(context));
+        bodyShop.addProperty("mobile_data", getDataUsageFromLastPing(context));
+        bodyShop.addProperty("device_id", DeviceID.get(context));
 
+        Log.v("UNIPIAZZA", "url=" + url);
+        Log.v("UNIPIAZZA", "bodyShop=" + bodyShop);
         Ion.with(context)
                 .load("PUT", url)
-                .setJsonObjectBody(body)
+                .addHeader(HEADER_STRING1, HEADER_STRING2)
+                .addHeader(HEADER_STRING3, HEADER_STRING4 + CurrentShop.getInstance().getAccessToken(context))
+                .setJsonObjectBody(bodyShop)
                 .asJsonObject()
                 .withResponse()
                 .setCallback(new FutureCallback<Response<JsonObject>>() {
                     @Override
                     public void onCompleted(Exception e, Response<JsonObject> result) {
+                        Log.v("UNIPIAZZA", "e=" + e);
+                        Log.v("UNIPIAZZA", "result=" + result);
                         Log.v("UNIPIAZZA", "result header=" + result.getHeaders().message());
                         Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
                         Log.v("UNIPIAZZA", "result result=" + result.getResult());
-                        Log.v("UNIPIAZZA", "e=" + e);
+                        CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
                     }
                 });
     }
 
+    public void saveDataUsageToSend(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        pref.edit().putLong("dataUsageToSend", getDataUsageFromLastPing(context)).commit();
+    }
 
+    private Long getDataUsageFromLastPing(Context context) {
+        Long totalMobileData;
+        Long currentMobileData = TrafficStats.getTotalRxBytes() + TrafficStats.getTotalTxBytes();
+        if (lastMobileData == 0L) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            totalMobileData = pref.getLong("dataUsageToSend", 0L);
+            pref.edit().putLong("dataUsageToSend", 0L).commit();
+        } else
+            totalMobileData = currentMobileData - lastMobileData;
+        lastMobileData = currentMobileData;
+        return totalMobileData;
+    }
 }

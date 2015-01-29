@@ -21,8 +21,6 @@ public class AttivitAppRESTClient {
 
     private static AttivitAppRESTClient instance;
 
-    private static final String HEADER_STRING1 = "Accept";
-    private static final String HEADER_STRING2 = "application/unipiazza.v4";
     private static final String HEADER_STRING3 = "Authorization";
     private static final String HEADER_STRING4 = "Bearer ";
     private static Long lastMobileData = 0L;
@@ -127,7 +125,6 @@ public class AttivitAppRESTClient {
 
         Ion.with(context)
                 .load(url)
-                .addHeader(HEADER_STRING1, HEADER_STRING2)
                 .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .asJsonObject()
                 .setCallback(
@@ -206,10 +203,10 @@ public class AttivitAppRESTClient {
         String url;
         String access_token = CurrentShop.getInstance().getAccessToken(context);
         url = UnipiazzaParams.RECEIPTS_URL;
-
+        Log.v("UNIPIAZZA", "url=" + url);
+        Log.v("UNIPIAZZA", "json=" + json);
         Ion.with(context)
-                .load(url)
-                .addHeader(HEADER_STRING1, HEADER_STRING2)
+                .load("POST", url)
                 .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .setJsonObjectBody(json)
                 .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
@@ -267,7 +264,6 @@ public class AttivitAppRESTClient {
 
         Ion.with(context)
                 .load(url)
-                .addHeader(HEADER_STRING1, HEADER_STRING2)
                 .addHeader(HEADER_STRING3, HEADER_STRING4 + access_token)
                 .setJsonObjectBody(json)
                 .asJsonObject()
@@ -337,7 +333,6 @@ public class AttivitAppRESTClient {
         Log.v("UNIPIAZZA", "bodyShop=" + bodyShop);
         Ion.with(context)
                 .load("PUT", url)
-                .addHeader(HEADER_STRING1, HEADER_STRING2)
                 .addHeader(HEADER_STRING3, HEADER_STRING4 + CurrentShop.getInstance().getAccessToken(context))
                 .setJsonObjectBody(bodyShop)
                 .asJsonObject()
@@ -347,10 +342,12 @@ public class AttivitAppRESTClient {
                     public void onCompleted(Exception e, Response<JsonObject> result) {
                         Log.v("UNIPIAZZA", "e=" + e);
                         Log.v("UNIPIAZZA", "result=" + result);
-                        Log.v("UNIPIAZZA", "result header=" + result.getHeaders().message());
-                        Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
-                        Log.v("UNIPIAZZA", "result result=" + result.getResult());
-                        CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
+                        if (e == null && result != null) {
+                            Log.v("UNIPIAZZA", "result header=" + result.getHeaders().message());
+                            Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
+                            Log.v("UNIPIAZZA", "result result=" + result.getResult());
+                            CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
+                        }
                     }
                 });
     }

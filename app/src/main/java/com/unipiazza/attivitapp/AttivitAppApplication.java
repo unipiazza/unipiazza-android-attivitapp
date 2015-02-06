@@ -1,10 +1,14 @@
 package com.unipiazza.attivitapp;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
+import android.os.SystemClock;
 
 import com.google.gson.JsonObject;
 
@@ -13,21 +17,36 @@ import com.google.gson.JsonObject;
  */
 public class AttivitAppApplication extends Application {
 
-    private Handler handler = new Handler();
     private final static int fivehours = 5 * 60 * 60 * 1000;
     private final static int oneHour = 1 * 60 * 60 * 1000;
 
     public void startPing() {
-        handler.postDelayed(runnable, 2 * 1000);
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        int time;
+        if (mWifi.isConnected())
+            time = oneHour;
+        else
+            time = fivehours;
+
+        alarmMgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() +
+                        2 * 1000, time, alarmIntent);
     }
 
-    private Runnable runnable = new Runnable() {
+    public static class AlarmReceiver extends BroadcastReceiver {
+
         @Override
-        public void run() {
-            CurrentShop.getInstance().isAuthenticated(AttivitAppApplication.this, new HttpCallback() {
+        public void onReceive(final Context context, Intent intent) {
+            CurrentShop.getInstance().isAuthenticated(context, new HttpCallback() {
                 @Override
                 public void onSuccess(JsonObject result) {
-                    AttivitAppRESTClient.getInstance(AttivitAppApplication.this).postPing(AttivitAppApplication.this, true, null);
+                    AttivitAppRESTClient.getInstance(context).postPing(context, true, null);
                 }
 
                 @Override
@@ -35,14 +54,7 @@ public class AttivitAppApplication extends Application {
 
                 }
             });
-            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-            if (mWifi.isConnected()) {
-                handler.postDelayed(this, oneHour);
-            } else
-                handler.postDelayed(this, fivehours);
         }
-    };
+    }
 
 }

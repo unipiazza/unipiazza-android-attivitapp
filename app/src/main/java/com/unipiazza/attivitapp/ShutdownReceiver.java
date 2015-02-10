@@ -11,7 +11,7 @@ public class ShutdownReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        AttivitAppRESTClient.getInstance(context).saveDataUsageToSend(context);
+        AttivitAppRESTClient.getInstance().saveDataUsageToSend(context);
     }
 
 }

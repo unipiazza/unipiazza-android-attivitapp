@@ -324,7 +324,7 @@ public class HomeTap extends Activity {
         Boolean internet = cd.isConnectingToInternet();
 
         if (internet == true) {
-            AttivitAppRESTClient.getInstance(HomeTap.this).getSearchUser(HomeTap.this, hash_pass, user_id, true, new HttpCallback() {
+            AttivitAppRESTClient.getInstance().getSearchUser(HomeTap.this, hash_pass, user_id, true, new HttpCallback() {
 
                 @Override
                 public void onSuccess(JsonObject result) {

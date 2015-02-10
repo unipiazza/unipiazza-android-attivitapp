@@ -53,7 +53,7 @@ public class CurrentShop extends User {
             SignedJWT signedJWT = SignedJWT.parse(CurrentShop.getInstance().getAccessToken(context));
             if (!verifyClaims(signedJWT.getJWTClaimsSet())) {
                 Log.v("UNIPIAZZA", "checkToken");
-                AttivitAppRESTClient.getInstance(context).postPing(context, false, callback);
+                AttivitAppRESTClient.getInstance().postPing(context, false, callback);
             } else
                 callback.onSuccess(null);
         } catch (ParseException e) {

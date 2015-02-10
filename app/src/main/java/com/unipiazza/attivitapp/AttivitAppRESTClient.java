@@ -25,7 +25,7 @@ public class AttivitAppRESTClient {
     private static final String HEADER_STRING4 = "Bearer ";
     private static Long lastMobileData = 0L;
 
-    public static AttivitAppRESTClient getInstance(Context context) {
+    public static AttivitAppRESTClient getInstance() {
         if (instance == null) {
             return new AttivitAppRESTClient();
         } else {

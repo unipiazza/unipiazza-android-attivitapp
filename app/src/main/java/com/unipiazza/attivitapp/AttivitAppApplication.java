@@ -20,6 +20,14 @@ public class AttivitAppApplication extends Application {
     private final static int fivehours = 5 * 60 * 60 * 1000;
     private final static int oneHour = 1 * 60 * 60 * 1000;
 
+    public static Context mContext;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mContext = this;
+    }
+
     public void startPing() {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
@@ -46,7 +54,7 @@ public class AttivitAppApplication extends Application {
             CurrentShop.getInstance().isAuthenticated(context, new HttpCallback() {
                 @Override
                 public void onSuccess(JsonObject result) {
-                    AttivitAppRESTClient.getInstance(context).postPing(context, true, null);
+                    AttivitAppRESTClient.getInstance().postPing(mContext, true, null);
                 }
 
                 @Override

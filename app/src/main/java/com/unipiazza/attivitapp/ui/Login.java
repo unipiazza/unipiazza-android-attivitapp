@@ -188,7 +188,7 @@ public class Login extends Activity implements OnClickListener {
             // Building Parameters
             Log.v("UNIPIAZZA", "username=" + email + " password=" + password);
 
-            AttivitAppRESTClient.getInstance(Login.this).postAuthenticate(Login.this, email, password, new HttpCallback() {
+            AttivitAppRESTClient.getInstance().postAuthenticate(Login.this, email, password, new HttpCallback() {
 
                 @Override
                 public void onSuccess(JsonObject result) {

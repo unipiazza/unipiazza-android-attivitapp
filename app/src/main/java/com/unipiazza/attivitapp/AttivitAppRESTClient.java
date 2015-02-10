@@ -343,10 +343,16 @@ public class AttivitAppRESTClient {
                         Log.v("UNIPIAZZA", "e=" + e);
                         Log.v("UNIPIAZZA", "result=" + result);
                         if (e == null && result != null) {
-                            Log.v("UNIPIAZZA", "result header=" + result.getHeaders().message());
-                            Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
-                            Log.v("UNIPIAZZA", "result result=" + result.getResult());
-                            CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
+                            try {
+                                Log.v("UNIPIAZZA", "result header=" + result.getHeaders().message());
+                                Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
+                                Log.v("UNIPIAZZA", "result result=" + result.getResult());
+                                CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
+                            } catch (NullPointerException ex) {
+                                ex.printStackTrace();
+                            }
+                        } else {
+                            Log.v("UNIPIAZZA", "errore nel ping");
                         }
                     }
                 });

@@ -64,13 +64,9 @@ public class CurrentShop extends User {
     private boolean verifyClaims(ReadOnlyJWTClaimsSet claimSet) {
         JSONObject claims = claimSet.toJSONObject();
         Long expiration = (Long) claims.get("exp");
-        Long principal = (Long) claims.get("shop_id");
 
         if (expiration == null || expiration < System.currentTimeMillis() / 1000) {
             Log.w("UNIPIAZZA", "Expired");
-            return false;
-        } else if (principal == null || principal != CurrentShop.getInstance().getId()) {
-            Log.w("UNIPIAZZA", "Principal claims not same as client identification: " + principal);
             return false;
         }
         return true;

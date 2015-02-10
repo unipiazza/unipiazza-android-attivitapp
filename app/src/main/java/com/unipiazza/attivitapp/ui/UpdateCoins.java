@@ -95,7 +95,7 @@ public class UpdateCoins extends Activity {
         last_name_view.setText(user_lastname);
 
         ImageView avatar = (ImageView) findViewById(R.id.avatar);
-        if (!CurrentUser.getInstance().isGender())
+        if (!CurrentUser.getInstance().isMale())
             avatar.setImageResource(R.drawable.user_icon_m);
         else
             avatar.setImageResource(R.drawable.user_icon_f);

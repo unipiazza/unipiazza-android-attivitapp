@@ -16,7 +16,7 @@ public class CurrentUser extends User {
 
     private String pass;
     private int unipoints;
-    private boolean gender;
+    private String gender;
 
     public CurrentUser(int id, String first_name, String last_name, String image_url) {
         super(id, first_name, last_name, image_url);
@@ -27,7 +27,7 @@ public class CurrentUser extends User {
     }
 
     public void setUser(Context context, String first_name, String last_name
-            , int unipoints, int id, String pass, boolean gender) {
+            , int unipoints, int id, String pass, String gender) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -52,11 +52,11 @@ public class CurrentUser extends User {
         this.unipoints = total_coins;
     }
 
-    public boolean isGender() {
-        return gender;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public void setGender(boolean gender) {
-        this.gender = gender;
+    public boolean isMale() {
+        return gender.equals("male");
     }
 }

@@ -138,21 +138,24 @@ public class AttivitAppRESTClient {
 
                                     if (e == null) {
                                         String hash_type = "";
+                                        String hash_keychain = result.get("hash_keychain").getAsString();
+                                        String hash_card = result.get("hash_card").getAsString();
                                         if (user_id != null && user_id.equals(result.get("id").getAsString()))
                                             hash_type = "smartphone";
-                                        else if (!result.get("hash_keychain").isJsonNull()
-                                                && hash_pass.equals(result.get("hash_keychain").getAsString()))
+                                        else if (hash_keychain.length() > 0
+                                                && hash_pass.equals(hash_keychain))
                                             hash_type = "keychain";
-                                        else if (!result.get("hash_card").isJsonNull()
-                                                && hash_pass.equals(result.get("hash_card").getAsString()))
+                                        else if (hash_card.length() > 0
+                                                && hash_pass.equals(hash_card))
                                             hash_type = "card";
+
                                         CurrentUser.getInstance().setUser(context,
                                                 result.get("first_name").getAsString(),
                                                 result.get("last_name").getAsString(),
                                                 result.get("shop_coins").getAsInt(),
                                                 result.get("id").getAsInt(),
                                                 hash_type,
-                                                result.get("gender").getAsBoolean());
+                                                result.get("gender").getAsString());
                                         callback.onSuccess(result);
                                     } else {
                                         callback.onFail(result, e);
@@ -348,8 +351,9 @@ public class AttivitAppRESTClient {
                                 Log.v("UNIPIAZZA", "result code=" + result.getHeaders().code());
                                 Log.v("UNIPIAZZA", "result result=" + result.getResult());
                                 CurrentShop.getInstance().setToken(context, result.getResult().get("token").getAsString());
-                            } catch (NullPointerException ex) {
+                            } catch (Exception ex) {
                                 ex.printStackTrace();
+                                Log.v("UNIPIAZZA", "errore nel ping");
                             }
                         } else {
                             Log.v("UNIPIAZZA", "errore nel ping");

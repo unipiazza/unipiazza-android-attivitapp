@@ -70,7 +70,7 @@ public class HomeActivity extends Activity {
         // Buttoni
         ImageButton btnAddProduct = (ImageButton) findViewById(R.id.add_coin);
         ImageView avatar = (ImageView) findViewById(R.id.avatar);
-        if (!currentUser.isGender())
+        if (currentUser.isMale())
             avatar.setImageResource(R.drawable.user_icon_m);
         else
             avatar.setImageResource(R.drawable.user_icon_f);

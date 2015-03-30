@@ -14,7 +14,7 @@
     <string name="add_product_title">Lista Prodotti</string>
     <string name="passwords_not_same">Password scorretta</string>
 
-    <color name="orange">#f58220</color>
+    <color name="orange">#002a76</color>
     <color name="orange_dark">#e94e1b</color>
     <color name="orange_very_dark">#a33613</color>
     <color name="white">#ffffff</color>

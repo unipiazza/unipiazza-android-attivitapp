@@ -2,7 +2,8 @@ package com.unipiazza.attivitapp;
 
 public class UnipiazzaParams {
 
-    public static final String BASE_URL = "http://unipiazza.herokuapp.com/";
+    //public static final String BASE_URL = "http://unipiazza.herokuapp.com/";
+    public static final String BASE_URL = "http://192.168.1.115:5000/";
 
     public static final String LOGIN_URL = BASE_URL + "auth/sign_in";
 

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class CurrentShop extends User {
 
     private static CurrentShop instance;
+    private ArrayList<Event> events;
 
     public static CurrentShop getInstance() {
         if (instance == null) {
@@ -73,10 +74,11 @@ public class CurrentShop extends User {
     }
 
     public void setAuthenticated(Context context, String email, String first_name, String token
-            , int id, String password, ArrayList<Prize> prizes) {
+            , int id, String password, ArrayList<Prize> prizes, ArrayList<Event> events) {
         this.id = id;
         this.first_name = first_name;
         this.prizes = prizes;
+        this.events = events;
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         Editor edit = pref.edit();
@@ -131,5 +133,9 @@ public class CurrentShop extends User {
 
     public void setPrizes(ArrayList<Prize> prizes) {
         this.prizes = prizes;
+    }
+
+    public ArrayList<Event> getEvents() {
+        return events;
     }
 }

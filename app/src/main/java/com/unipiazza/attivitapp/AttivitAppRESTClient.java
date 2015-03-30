@@ -47,59 +47,47 @@ public class AttivitAppRESTClient {
                 .setJsonObjectBody(json)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
-                                 @Override
-                                 public void onCompleted(Exception e, JsonObject result) {
-                                     Log.v("UNIPIAZZA", "postAuthenticate result=" + result);
-                                     Log.v("UNIPIAZZA", "postAuthenticate e=" + e);
-                                     if (e == null) {
-                                         try {
-                                             JsonObject shopJson = result.get("shop").getAsJsonObject();
-                                             String token = result.get("token").getAsString();
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        Log.v("UNIPIAZZA", "postAuthenticate result=" + result);
+                        Log.v("UNIPIAZZA", "postAuthenticate e=" + e);
+                        if (e == null) {
+                            try {
+                                JsonObject shopJson = result.get("shop").getAsJsonObject();
+                                String token = result.get("token").getAsString();
 
-                                             String email = shopJson.get("email").getAsString();
-                                             String first_name = shopJson.get("name").getAsString();
-                                             int id = shopJson.get("id").getAsInt();
-                                             JsonArray prizesJson = shopJson.get("prizes").getAsJsonArray();
-                                             JsonArray eventsJson = shopJson.get("events").getAsJsonArray();
+                                String email = shopJson.get("email").getAsString();
+                                String first_name = shopJson.get("name").getAsString();
+                                int id = shopJson.get("id").getAsInt();
+                                JsonArray prizesJson = shopJson.get("prizes").getAsJsonArray();
 
-                                             ArrayList<Prize> prizes = new ArrayList<Prize>();
-                                             for (int i = 0; i < prizesJson.size(); i++) {
-                                                 JsonObject prizeJ = prizesJson.get(i).getAsJsonObject();
-                                                 if (prizeJ.get("visible").getAsBoolean()) {
-                                                     Prize prize = new Prize(prizeJ.get("id").getAsInt()
-                                                             , prizeJ.get("title").getAsString()
-                                                             , prizeJ.get("description").getAsString()
-                                                             , prizeJ.get("coins").getAsInt());
-                                                     prizes.add(prize);
-                                                 }
-                                             }
+                                ArrayList<Prize> prizes = new ArrayList<Prize>();
+                                for (int i = 0; i < prizesJson.size(); i++) {
+                                    JsonObject prizeJ = prizesJson.get(i).getAsJsonObject();
+                                    if (prizeJ.get("visible").getAsBoolean()) {
+                                        Prize prize = new Prize(prizeJ.get("id").getAsInt()
+                                                , prizeJ.get("title").getAsString()
+                                                , prizeJ.get("description").getAsString()
+                                                , prizeJ.get("coins").getAsInt());
+                                        prizes.add(prize);
+                                    }
+                                }
 
-                                             ArrayList<Event> events = new ArrayList<Event>();
-                                             for (int i = 0; i < eventsJson.size(); i++) {
-                                                 JsonObject eventJ = eventsJson.get(i).getAsJsonObject();
-                                                 Event event = new Event(eventJ.get("id").getAsInt()
-                                                         , eventJ.get("title").getAsString());
-                                                 events.add(event);
-                                             }
+                                CurrentShop.getInstance().setAuthenticated(context, email, first_name
+                                        , token
+                                        , id
+                                        , password
+                                        , prizes);
+                                callback.onSuccess(result);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                callback.onFail(result, ex);
+                            }
+                        } else
+                            callback.onFail(result, e);
+                    }
 
-                                             CurrentShop.getInstance().setAuthenticated(context, email, first_name
-                                                     , token
-                                                     , id
-                                                     , password
-                                                     , prizes
-                                                     , events);
-                                             callback.onSuccess(result);
-                                         } catch (Exception ex) {
-                                             ex.printStackTrace();
-                                             callback.onFail(result, ex);
-                                         }
-                                     } else
-                                         callback.onFail(result, e);
-                                 }
-
-                             }
-
-                );
+                });
 
     }
 
@@ -181,16 +169,13 @@ public class AttivitAppRESTClient {
                 );
     }
 
-    public void postReceipts(final Context context, final int user_id, final String coins, final String hash_type, final boolean checkToken, final String event, final HttpCallback callback) {
-        Log.v("UNIPIAZZA", "postReceipts");
+    public void postReceipts(final Context context, final int user_id, final String coins, final String hash_type, final boolean checkToken, final HttpCallback callback) {
         if (checkToken) {
-            Log.v("UNIPIAZZA", "checkToken");
-
             CurrentShop.getInstance().checkToken(context, new HttpCallback() {
 
                 @Override
                 public void onSuccess(JsonObject result) {
-                    postReceiptsHttp(context, user_id, coins, hash_type, checkToken, event, callback);
+                    postReceiptsHttp(context, user_id, coins, hash_type, checkToken, callback);
                 }
 
                 @Override
@@ -200,26 +185,22 @@ public class AttivitAppRESTClient {
 
             });
         } else
-            postReceiptsHttp(context, user_id, coins, hash_type, checkToken, event, callback);
+            postReceiptsHttp(context, user_id, coins, hash_type, checkToken, callback);
 
     }
 
-    private void postReceiptsHttp(final Context context, final int user_id, String coinsString, final String hash_type, boolean checkToken, String event, final HttpCallback callback) {
-        Log.v("UNIPIAZZA", "postReceiptsHttp");
-
+    private void postReceiptsHttp(final Context context, final int user_id, String coinsString, final String hash_type, boolean checkToken, final HttpCallback callback) {
         float coins = 0;
-        /*try {
+        try {
             coins = Float.valueOf(coinsString);
         } catch (NumberFormatException e) {
             callback.onFail(null, e);
-            return;
-        }*/
+        }
         JsonObject json = new JsonObject();
         JsonObject jsonReceipt = new JsonObject();
         jsonReceipt.addProperty("user_id", user_id);
         jsonReceipt.addProperty("total", coins);
         jsonReceipt.addProperty("hash_type", hash_type);
-        jsonReceipt.addProperty("event", event);
         json.add("receipt", jsonReceipt);
 
         String url;

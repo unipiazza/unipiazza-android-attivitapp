@@ -41,7 +41,6 @@ public class UpdateCoins extends Activity {
     private String gift_id;
     static final String errore = "Errore.";
     public static final String MIME_TEXT_PLAIN = "text/plain";
-    private String event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class UpdateCoins extends Activity {
             setContentView(R.layout.update_layout);
             updateLayout = (LinearLayout) findViewById(R.id.update_layout);
             progresssCoins = (ProgressBar) findViewById(R.id.progressCoins);
-            event = (String) i.getStringExtra("event");
         }
 
         updateJSONdata();
@@ -104,7 +102,7 @@ public class UpdateCoins extends Activity {
 
         if (!gift)
             AttivitAppRESTClient.getInstance().postReceipts(UpdateCoins.this
-                    , CurrentUser.getInstance().getId(), saldo, CurrentUser.getInstance().getPass(), true, event, new HttpCallback() {
+                    , CurrentUser.getInstance().getId(), saldo, CurrentUser.getInstance().getPass(), true, new HttpCallback() {
                 @Override
                 public void onSuccess(JsonObject result) {
                     updateLayout.setVisibility(View.VISIBLE);

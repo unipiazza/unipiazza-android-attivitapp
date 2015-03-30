@@ -26,8 +26,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.unipiazza.attivitapp.CurrentShop;
-import com.unipiazza.attivitapp.Event;
 import com.unipiazza.attivitapp.JSONParser;
 import com.unipiazza.attivitapp.R;
 
@@ -72,17 +70,6 @@ public class AddCoins extends Activity implements OnClickListener {
         setContentView(R.layout.add_coins);
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (CurrentShop.getInstance().getEvents().size() > 0)
-            createAscomDialog();
-        else {
-            String value = "";
-            Intent i = new Intent(AddCoins.this, UpdateCoins.class);
-            String gift_value = "no";
-            i.putExtra("gift_value", gift_value);
-            i.putExtra("event", value);
-            startActivity(i);
-        }
-
         send_products = (Button) findViewById(R.id.send_products);
         send_products.setOnClickListener(this);
         // Retrieve a reference to the EditText field for displaying the result.
@@ -116,27 +103,6 @@ public class AddCoins extends Activity implements OnClickListener {
         comma.setOnClickListener(listener);
 
         prepareNFCIntercept();
-    }
-
-    private void createAscomDialog() {
-        ArrayList<Event> events = CurrentShop.getInstance().getEvents();
-        final CharSequence[] eventTitle = new CharSequence[events.size()];
-        for (int i = 0; i < events.size(); i++) {
-            eventTitle[i] = events.get(i).getTitle();
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("scegli un evento")
-                .setItems(eventTitle, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String value = eventTitle[which].toString();
-                        Intent i = new Intent(AddCoins.this, UpdateCoins.class);
-                        String gift_value = "no";
-                        i.putExtra("gift_value", gift_value);
-                        i.putExtra("event", value);
-                        startActivity(i);
-                    }
-                });
-        builder.create().show();
     }
 
     private class BtnListener implements OnClickListener {

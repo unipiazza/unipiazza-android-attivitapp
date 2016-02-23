@@ -1,5 +1,4 @@
 AttivitApp
 ==========
 
-Unipiazza App for Activities
-Astudio
+Unipiazza App Smartphone Only. Ascom Version?
